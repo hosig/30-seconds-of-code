@@ -3,7 +3,6 @@
 These snippets, while useful and interesting, didn't quite make it into the repository due to either having very specific use-cases or being outdated. However we felt like they might still be useful to some readers, so here they are.
 ## Table of Contents
 * [`JSONToDate`](#jsontodate)
-* [`squareSum`](#squaresum)
 * [`binarySearch`](#binarysearch)
 * [`celsiusToFahrenheit`](#celsiustofahrenheit)
 * [`cleanObj`](#cleanobj)
@@ -15,6 +14,7 @@ These snippets, while useful and interesting, didn't quite make it into the repo
 * [`fibonacciUntilNum`](#fibonacciuntilnum)
 * [`heronArea`](#heronarea)
 * [`howManyTimes`](#howmanytimes)
+* [`httpDelete`](#httpdelete)
 * [`httpPut`](#httpput)
 * [`isArmstrongNumber`](#isarmstrongnumber)
 * [`isSimilar`](#issimilar)
@@ -26,7 +26,7 @@ These snippets, while useful and interesting, didn't quite make it into the repo
 * [`removeVowels`](#removevowels)
 * [`solveRPN`](#solverpn)
 * [`speechSynthesis`](#speechsynthesis)
-* [`httpDelete`](#httpdelete)
+* [`squareSum`](#squaresum)
 
 ---
 ### JSONToDate
@@ -51,28 +51,7 @@ JSONToDate(/Date(1489525200000)/); // "14/3/2017"
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
-
-### squareSum
-
-Squares each number in an array and then sums the results together.
-
-Use `Array.prototype.reduce()` in combination with `Math.pow()` to iterate over numbers and sum their squares into an accumulator.
-
-```js
-const squareSum = (...args) => args.reduce((squareSum, number) => squareSum + Math.pow(number, 2), 0);
-```
-
-<details>
-<summary>Examples</summary>
-
-```js
-squareSum(1, 2, 2); // 9
-```
-
-</details>
-
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### binarySearch
 
@@ -104,7 +83,7 @@ binarySearch([1, 4, 6, 7, 12, 13, 15, 18, 19, 20, 22, 24], 21); // -1
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### celsiusToFahrenheit
 
@@ -125,7 +104,7 @@ celsiusToFahrenheit(33) // 91.4
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### cleanObj
 
@@ -157,7 +136,7 @@ cleanObj(testObj, ['a'], 'children'); // { a: 1, children : { a: 1}}
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### collatz
 
@@ -178,7 +157,7 @@ collatz(8); // 4
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### countVowels
 
@@ -200,7 +179,7 @@ countVowels('gym'); // 0
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### factors
 
@@ -250,7 +229,7 @@ factors(-12, true); // [2,3]
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### fahrenheitToCelsius
 
@@ -271,7 +250,7 @@ fahrenheitToCelsius(32); // 0
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### fibonacciCountUntilNum
 
@@ -293,7 +272,7 @@ fibonacciCountUntilNum(10); // 7
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### fibonacciUntilNum
 
@@ -322,7 +301,7 @@ fibonacciUntilNum(10); // [ 0, 1, 1, 2, 3, 5, 8 ]
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### heronArea
 
@@ -349,7 +328,7 @@ heronArea(3, 4, 5); // 6
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### howManyTimes
 
@@ -386,7 +365,39 @@ howManyTimes(100, -1); // Infinity
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
+
+### httpDelete
+
+Makes a `DELETE` request to the passed URL.
+
+Use `XMLHttpRequest` web api to make a `delete` request to the given `url`.
+Handle the `onload` event, by running the provided `callback` function.
+Handle the `onerror` event, by running the provided `err` function.
+Omit the third argument, `err` to log the request to the console's error stream by default.
+
+```js
+const httpDelete = (url, callback, err = console.error) => {
+  const request = new XMLHttpRequest();
+  request.open('DELETE', url, true);
+  request.onload = () => callback(request);
+  request.onerror = () => err(request);
+  request.send();
+};
+```
+
+<details>
+<summary>Examples</summary>
+
+```js
+httpDelete('https://website.com/users/123', request => {
+  console.log(request.responseText);
+}); // 'Deletes a user from the database'
+```
+
+</details>
+
+<br>[⬆ Back to top](#contents)
 
 ### httpPut
 
@@ -422,7 +433,7 @@ httpPut('https://website.com/users/123', data, request => {
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### isArmstrongNumber
 
@@ -447,7 +458,7 @@ isArmstrongNumber(56); // false
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### isSimilar
 
@@ -477,7 +488,7 @@ isSimilar('tr','Rohit'); // false
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### kmphToMph
 
@@ -499,7 +510,7 @@ kmphToMph(345.4); // 138.24264965280207
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### levenshteinDistance
 
@@ -546,7 +557,7 @@ compareStrings('30-seconds-of-code', '30-seconds-of-python-code'); // 99.72 (%)
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### mphToKmph
 
@@ -568,7 +579,7 @@ mphToKmph(85.9); // 138.24264965280207
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### pipeLog
 
@@ -591,7 +602,7 @@ pipeLog(1); // logs `1` and returns `1`
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### quickSort
 
@@ -622,7 +633,7 @@ quickSort([4, 1, 3, 2], true); // [4,3,2,1]
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### removeVowels
 
@@ -645,7 +656,7 @@ removeVowels("foobAr","*"); // "f**b*r"
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### solveRPN
 
@@ -698,7 +709,7 @@ solveRPN('2 3 ^'); // 8
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
 ### speechSynthesis
 
@@ -726,37 +737,26 @@ speechSynthesis('Hello, World'); // // plays the message
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
-### httpDelete
+### squareSum
 
-Makes a `DELETE` request to the passed URL.
+Squares each number in an array and then sums the results together.
 
-Use `XMLHttpRequest` web api to make a `delete` request to the given `url`.
-Handle the `onload` event, by running the provided `callback` function.
-Handle the `onerror` event, by running the provided `err` function.
-Omit the third argument, `err` to log the request to the console's error stream by default.
+Use `Array.prototype.reduce()` in combination with `Math.pow()` to iterate over numbers and sum their squares into an accumulator.
 
 ```js
-const httpDelete = (url, callback, err = console.error) => {
-  const request = new XMLHttpRequest();
-  request.open('DELETE', url, true);
-  request.onload = () => callback(request);
-  request.onerror = () => err(request);
-  request.send();
-};
+const squareSum = (...args) => args.reduce((squareSum, number) => squareSum + Math.pow(number, 2), 0);
 ```
 
 <details>
 <summary>Examples</summary>
 
 ```js
-httpDelete('https://website.com/users/123', request => {
-  console.log(request.responseText);
-}); // 'Deletes a user from the database'
+squareSum(1, 2, 2); // 9
 ```
 
 </details>
 
-<br>[⬆ Back to top](#table-of-contents)
+<br>[⬆ Back to top](#contents)
 
