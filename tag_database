@@ -31,6 +31,7 @@ coalesceFactory:utility,intermediate
 collectInto:adapter,function,array,intermediate
 colorize:node,utility,string,intermediate
 compact:array,beginner
+compactWhitespace:string,regexp,beginner
 compose:function,intermediate
 composeRight:function,intermediate
 converge:function,intermediate
@@ -50,6 +51,7 @@ decapitalize:string,array,intermediate
 deepClone:object,recursion,intermediate
 deepFlatten:array,recursion,intermediate
 deepFreeze:object,recursion,intermediate
+deepMapKeys:object,recursion,advanced
 defaults:object,intermediate
 defer:function,intermediate
 degreesToRads:math,beginner
@@ -75,6 +77,7 @@ everyNth:array,beginner
 extendHex:utility,string,intermediate
 factorial:math,recursion,beginner
 fibonacci:math,array,beginner
+filterFalsy:array,beginner
 filterNonUnique:array,beginner
 filterNonUniqueBy:array,function,intermediate
 findKey:object,function,intermediate
@@ -145,6 +148,7 @@ isEmpty:type,array,object,string,beginner
 isEven:math,beginner
 isFunction:type,function,beginner
 isLowerCase:string,utility,beginner
+isNegativeZero:math,utility,beginner
 isNil:type,beginner
 isNull:type,beginner
 isNumber:type,math,beginner
@@ -186,6 +190,7 @@ maxN:array,math,beginner
 median:math,array,intermediate
 memoize:function,advanced
 merge:object,array,intermediate
+midpoint:math,array,beginner
 minBy:math,array,function,beginner
 minDate:date,math,beginner
 minN:array,math,beginner

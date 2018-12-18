@@ -370,7 +370,7 @@
         "archived": false
       },
       "meta": {
-        "hash": "8c245a7fc94edffaf5cae4c28f37ed2e989772a9663a5f5bce98147f708a712e"
+        "hash": "ae8f373cb6c661896ce4256e9f8a2f7f9c14f1699651d366af038f66a938f70e"
       }
     },
     {
@@ -488,6 +488,21 @@
       },
       "meta": {
         "hash": "0f631b67b8460ed99917ff1468051e1e075ef02b280838ec14ad3fede2f48c7f"
+      }
+    },
+    {
+      "id": "compactWhitespace",
+      "type": "snippetListing",
+      "attributes": {
+        "tags": [
+          "string",
+          "regexp",
+          "beginner"
+        ],
+        "archived": false
+      },
+      "meta": {
+        "hash": "c1e8ff69ac01f5be0595f6adf8b0df11dd8b8e557beb71f5faefb7a119282780"
       }
     },
     {
@@ -768,6 +783,21 @@
       },
       "meta": {
         "hash": "9cf10fcda51ff8e1d130b0efa7971549a0d0bb4c24090c5766b82c12e9958604"
+      }
+    },
+    {
+      "id": "deepMapKeys",
+      "type": "snippetListing",
+      "attributes": {
+        "tags": [
+          "object",
+          "recursion",
+          "advanced"
+        ],
+        "archived": false
+      },
+      "meta": {
+        "hash": "e66191a28aba485589b3b06933c13d999962af982b5b7b1b136c10f4d09abd8d"
       }
     },
     {
@@ -1134,6 +1164,20 @@
       },
       "meta": {
         "hash": "a6d182258648783ab09e72d4c40ac9de0dd3687a3b82c27715efab34d1836e1c"
+      }
+    },
+    {
+      "id": "filterFalsy",
+      "type": "snippetListing",
+      "attributes": {
+        "tags": [
+          "array",
+          "beginner"
+        ],
+        "archived": false
+      },
+      "meta": {
+        "hash": "313401bff0dc161b9bfb2b123f7a98eb6630dc5d2ae1bb31400a340203a50255"
       }
     },
     {
@@ -1664,7 +1708,7 @@
         "archived": false
       },
       "meta": {
-        "hash": "8b7b70809f93fd9392315a5c63aa4cbbf9b45eb1165a7d44db314186d407816b"
+        "hash": "40558410bed6e9e2866362dc86898fd28a97073f798d8dd5c566eea2ccec2f8f"
       }
     },
     {
@@ -2174,6 +2218,21 @@
       }
     },
     {
+      "id": "isNegativeZero",
+      "type": "snippetListing",
+      "attributes": {
+        "tags": [
+          "math",
+          "utility",
+          "beginner"
+        ],
+        "archived": false
+      },
+      "meta": {
+        "hash": "c70f4e3b631a99000fc48ff1f7716b9b32652e707c2421b688715533ad316e6c"
+      }
+    },
+    {
       "id": "isNil",
       "type": "snippetListing",
       "attributes": {
@@ -2452,7 +2511,7 @@
         "archived": false
       },
       "meta": {
-        "hash": "b4417a972f391836241e88587797a8cd995f32ee71fbfcfe9e590c8fa8675558"
+        "hash": "9a304bb4dbaddc9c5e0cdc56606ee8286c891d6f82076e5742514f251b30a891"
       }
     },
     {
@@ -2786,6 +2845,21 @@
       },
       "meta": {
         "hash": "13f1b8dca2fb1c6ebba61abb7e5784fc80288e59f4979e463c5f4b81497d76bd"
+      }
+    },
+    {
+      "id": "midpoint",
+      "type": "snippetListing",
+      "attributes": {
+        "tags": [
+          "math",
+          "array",
+          "beginner"
+        ],
+        "archived": false
+      },
+      "meta": {
+        "hash": "799134f9e026da20af240ed4d97b418bfac198394cd559cca19b143d3f7d4fb7"
       }
     },
     {
@@ -4153,7 +4227,7 @@
         "archived": false
       },
       "meta": {
-        "hash": "c19982a92698e82e05f0f903aeac184191a6371efc35459475bbf2177e64c6e9"
+        "hash": "9f18c29d189a684f99ec3801aef007891c2e8dd7c876b4e4701249ebd8e92061"
       }
     },
     {
@@ -4414,7 +4488,7 @@
         "archived": false
       },
       "meta": {
-        "hash": "c7a62b55b5a90661bf3f9c956f075906439a50151a3aee4023ad8fe878cae2e6"
+        "hash": "2fd449a2a993bdbc2b93d185ef09aea72af7845152de46d6050db82efe912130"
       }
     },
     {

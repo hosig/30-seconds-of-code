@@ -46,10 +46,8 @@ yarn add 30-seconds-of-code
 
 **Browser**
 
-> IMPORTANT: replace the `src` with the full version link and desired target spec (such as ES5 minified)):
-
 ```html
-<script src="https://unpkg.com/30-seconds-of-code"></script>
+<script src="https://unpkg.com/30-seconds-of-code@1/dist/_30s.es5.min.js"></script>
 <script>
   _30s.average(1, 2, 3);
 </script>
@@ -65,18 +63,6 @@ _30s.average(1, 2, 3);
 // ES Modules
 import _30s from '30-seconds-of-code';
 _30s.average(1, 2, 3);
-```
-
-To import snippets directly:
-
-```js
-// CommonJS
-const { average } = require('30-seconds-of-code');
-average(1, 2, 3);
-
-// ES Modules
-import { average } from '30-seconds-of-code';
-average(1, 2, 3);
 ```
 
 </details>
@@ -127,6 +113,7 @@ average(1, 2, 3);
 * [`dropRightWhile`](#droprightwhile)
 * [`dropWhile`](#dropwhile)
 * [`everyNth`](#everynth)
+* [`filterFalsy`](#filterfalsy)
 * [`filterNonUnique`](#filternonunique)
 * [`filterNonUniqueBy`](#filternonuniqueby)
 * [`findLast`](#findlast)
@@ -321,11 +308,13 @@ average(1, 2, 3);
 * [`inRange`](#inrange)
 * [`isDivisible`](#isdivisible)
 * [`isEven`](#iseven)
+* [`isNegativeZero`](#isnegativezero)
 * [`isPrime`](#isprime)
 * [`lcm`](#lcm)
 * [`luhnCheck`](#luhncheck-)
 * [`maxBy`](#maxby)
 * [`median`](#median)
+* [`midpoint`](#midpoint)
 * [`minBy`](#minby)
 * [`percentile`](#percentile)
 * [`powerset`](#powerset)
@@ -374,6 +363,7 @@ average(1, 2, 3);
 * [`bindAll`](#bindall)
 * [`deepClone`](#deepclone)
 * [`deepFreeze`](#deepfreeze)
+* [`deepMapKeys`](#deepmapkeys-)
 * [`defaults`](#defaults)
 * [`dig`](#dig)
 * [`equals`](#equals-)
@@ -416,6 +406,7 @@ average(1, 2, 3);
 * [`byteSize`](#bytesize)
 * [`capitalize`](#capitalize)
 * [`capitalizeEveryWord`](#capitalizeeveryword)
+* [`compactWhitespace`](#compactwhitespace)
 * [`CSVToArray`](#csvtoarray)
 * [`CSVToJSON`](#csvtojson-)
 * [`decapitalize`](#decapitalize)
@@ -1253,6 +1244,27 @@ const everyNth = (arr, nth) => arr.filter((e, i) => i % nth === nth - 1);
 
 ```js
 everyNth([1, 2, 3, 4, 5, 6], 2); // [ 2, 4, 6 ]
+```
+
+</details>
+
+<br>[⬆ Back to top](#contents)
+
+### filterFalsy
+
+Filters out the falsy values in an array.
+
+Use `Array.prototype.filter()` to get an array containing only truthy values.
+
+```js
+const filterFalsy = arr => arr.filter(Boolean);
+```
+
+<details>
+<summary>Examples</summary>
+
+```js
+filterFalsy(['', true, {}, false, 'sample', 1, 0]); // [true, {}, 'sample', 1]
 ```
 
 </details>
@@ -2806,7 +2818,7 @@ const toHash = (object, key) =>
 <summary>Examples</summary>
 
 ```js
-toHash([4, 3, 2, 1]); // { 0: 4, 1: 3, 2: 2, 1: 1 }
+toHash([4, 3, 2, 1]); // { 0: 4, 1: 3, 2: 2, 3: 1 }
 toHash([{ a: 'label' }], 'a'); // { label: { a: 'label' } }
 // A more in depth example:
 let users = [{ id: 1, first: 'Jon' }, { id: 2, first: 'Joe' }, { id: 3, first: 'Moe' }];
@@ -3647,7 +3659,7 @@ Hides all the elements specified.
 Use `NodeList.prototype.forEach()` to apply `display: none` to each element specified.
 
 ```js
-const hide = els => els.forEach(e => (e.style.display = 'none'));
+const hide = (...el) => [...el].forEach(e => (e.style.display = 'none'));
 ```
 
 <details>
@@ -4605,7 +4617,11 @@ Loop through an array of functions containing asynchronous events, calling `next
 ```js
 const chainAsync = fns => {
   let curr = 0;
-  const next = () => fns[curr++](next);
+  const last = fns[fns.length - 1];
+  const next = () => {
+    const fn = fns[curr++];
+    fn === last ? fn() : fn(next);
+  };
   next();
 };
 ```
@@ -4621,6 +4637,10 @@ chainAsync([
   },
   next => {
     console.log('1 second');
+    setTimeout(next, 1000);
+  },
+  () => {
+    console.log('2 second');
   }
 ]);
 ```
@@ -5675,6 +5695,28 @@ isEven(3); // false
 
 <br>[⬆ Back to top](#contents)
 
+### isNegativeZero
+
+Checks if the given value is equal to negative zero (`-0`).
+
+Checks whether a passed value is equal to `0` and if `1` divided by the value equals `-Infinity`.
+
+```js
+const isNegativeZero = val => val === 0 && 1 / val === -Infinity;
+```
+
+<details>
+<summary>Examples</summary>
+
+```js
+isNegativeZero(-0); // true
+isNegativeZero(0); // false
+```
+
+</details>
+
+<br>[⬆ Back to top](#contents)
+
 ### isPrime
 
 Checks if the provided integer is a prime number.
@@ -5807,6 +5849,30 @@ const median = arr => {
 ```js
 median([5, 6, 50, 1, -5]); // 5
 ```
+
+</details>
+
+<br>[⬆ Back to top](#contents)
+
+### midpoint
+
+Calculates the midpoint between two pairs of (x,y) points.
+
+Destructure the array to get `x1`, `y1`, `x2` and `y2`, calculate the midpoint for each dimension by dividing the sum of the two endpoints by `2`.
+
+```js
+const midpoint = ([x1, y1], [x2, y2]) => [(x1 + x2) / 2, (y1 + y2) / 2];
+```
+
+<details>
+<summary>Examples</summary>
+
+```js
+midpoint([2, 2], [4, 4]); // [3, 3]
+midpoint([4, 4], [6, 6]); // [5, 5]
+midpoint([1, 3], [2, 4]); // [1.5, 3.5]
+```
+
 
 </details>
 
@@ -6083,6 +6149,7 @@ const sum = (...arr) => [...arr].reduce((acc, val) => acc + val, 0);
 <summary>Examples</summary>
 
 ```js
+sum(1, 2, 3, 4); // 10
 sum(...[1, 2, 3, 4]); // 10
 ```
 
@@ -6644,6 +6711,66 @@ const o = deepFreeze([1, [2, 3]]);
 
 o[0] = 3; // not allowed
 o[1][0] = 4; // not allowed as well
+```
+
+</details>
+
+<br>[⬆ Back to top](#contents)
+
+### deepMapKeys ![advanced](/advanced.svg)
+
+Deep maps an object keys.
+
+Creates an object with the same values as the provided object and keys generated by running the provided function for each key.
+
+Use `Object.keys(obj)` to iterate over the object's keys. 
+Use `Array.prototype.reduce()` to create a new object with the same values and mapped keys using `fn`.
+
+```js
+const deepMapKeys = (obj, f) =>
+  Array.isArray(obj)
+    ? obj.map(val => deepMapKeys(val, f))
+    : typeof obj === 'object'
+      ? Object.keys(obj).reduce((acc, current) => {
+        const val = obj[current];
+        acc[f(current)] =
+            val !== null && typeof val === 'object' ? deepMapKeys(val, f) : (acc[f(current)] = val);
+        return acc;
+      }, {})
+      : obj;
+```
+
+<details>
+<summary>Examples</summary>
+
+```js
+const obj = {
+  foo: '1',
+  nested: {
+    child: {
+      withArray: [
+        {
+          grandChild: ['hello']
+        }
+      ]
+    }
+  }
+};
+const upperKeysObj = deepMapKeys(obj, key => key.toUpperCase());
+/*
+{
+  "FOO":"1",
+  "NESTED":{
+    "CHILD":{
+      "WITHARRAY":[
+        {
+          "GRANDCHILD":[ 'hello' ]
+        }
+      ]
+    }
+  }
+}
+*/
 ```
 
 </details>
@@ -7594,6 +7721,28 @@ const capitalizeEveryWord = str => str.replace(/\b[a-z]/g, char => char.toUpperC
 
 ```js
 capitalizeEveryWord('hello world!'); // 'Hello World!'
+```
+
+</details>
+
+<br>[⬆ Back to top](#contents)
+
+### compactWhitespace
+
+Returns a string with whitespaces compacted.
+
+Use `String.prototype.replace()` with a regular expression to replace all occurences of 2 or more whitespace characters with a single space.
+
+```js
+const compactWhitespace = str => str.replace(/\s{2,}/g, ' ');
+```
+
+<details>
+<summary>Examples</summary>
+
+```js
+compactWhitespace('Lorem    Ipsum'); // 'Lorem Ipsum'
+compactWhitespace('Lorem \n Ipsum'); // 'Lorem Ipsum'
 ```
 
 </details>
@@ -8815,14 +8964,14 @@ isUndefined(undefined); // true
 
 ### isValidJSON
 
-Checks if the provided argument is a valid JSON.
+Checks if the provided string is a valid JSON.
 
-Use `JSON.parse()` and a `try... catch` block to check if the provided argument is a valid JSON.
+Use `JSON.parse()` and a `try... catch` block to check if the provided string is a valid JSON.
 
 ```js
-const isValidJSON = obj => {
+const isValidJSON = str => {
   try {
-    JSON.parse(obj);
+    JSON.parse(str);
     return true;
   } catch (e) {
     return false;
