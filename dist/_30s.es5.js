@@ -118,54 +118,6 @@
 
   var crypto = typeof require !== "undefined" && require('crypto');
 
-  var CSVToArray = function CSVToArray(data) {
-    var delimiter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
-    var omitFirstRow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
-    return data.slice(omitFirstRow ? data.indexOf('\n') + 1 : 0).split('\n').map(function (v) {
-      return v.split(delimiter);
-    });
-  };
-  var CSVToJSON = function CSVToJSON(data) {
-    var delimiter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
-    var titles = data.slice(0, data.indexOf('\n')).split(delimiter);
-    return data.slice(data.indexOf('\n') + 1).split('\n').map(function (v) {
-      var values = v.split(delimiter);
-      return titles.reduce(function (obj, title, index) {
-        return obj[title] = values[index], obj;
-      }, {});
-    });
-  };
-  var JSONToFile = function JSONToFile(obj, filename) {
-    return fs.writeFile("".concat(filename, ".json"), JSON.stringify(obj, null, 2));
-  };
-  var JSONtoCSV = function JSONtoCSV(arr, columns) {
-    var delimiter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ',';
-    return [columns.join(delimiter)].concat(_toConsumableArray(arr.map(function (obj) {
-      return columns.reduce(function (acc, key) {
-        return "".concat(acc).concat(!acc.length ? '' : delimiter, "\"").concat(!obj[key] ? '' : obj[key], "\"");
-      }, '');
-    }))).join('\n');
-  };
-  var RGBToHex = function RGBToHex(r, g, b) {
-    return ((r << 16) + (g << 8) + b).toString(16).padStart(6, '0');
-  };
-  var URLJoin = function URLJoin() {
-    for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
-      args[_key] = arguments[_key];
-    }
-
-    return args.join('/').replace(/[\/]+/g, '/').replace(/^(.+):\//, '$1://').replace(/^file:/, 'file:/').replace(/\/(\?|&|#[^!])/g, '$1').replace(/\?/g, '&').replace('&', '?');
-  };
-  var UUIDGeneratorBrowser = function UUIDGeneratorBrowser() {
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
-      return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
-    });
-  };
-  var UUIDGeneratorNode = function UUIDGeneratorNode() {
-    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
-      return (c ^ crypto.randomBytes(1)[0] & 15 >> c / 4).toString(16);
-    });
-  };
   var all = function all(arr) {
     var fn = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : Boolean;
     return arr.every(fn);
@@ -187,7 +139,7 @@
     var delimiter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
     return arr.map(function (v) {
       return v.map(function (x) {
-        return "\"".concat(x, "\"");
+        return isNaN(x) ? "\"".concat(x.replace(/"/g, '""'), "\"") : x;
       }).join(delimiter);
     }).join('\n');
   };
@@ -200,8 +152,8 @@
   };
   var ary = function ary(fn, n) {
     return function () {
-      for (var _len2 = arguments.length, args = new Array(_len2), _key2 = 0; _key2 < _len2; _key2++) {
-        args[_key2] = arguments[_key2];
+      for (var _len = arguments.length, args = new Array(_len), _key = 0; _key < _len; _key++) {
+        args[_key] = arguments[_key];
       }
 
       return fn.apply(void 0, _toConsumableArray(args.slice(0, n)));
@@ -212,8 +164,8 @@
   };
   var attempt = function attempt(fn) {
     try {
-      for (var _len3 = arguments.length, args = new Array(_len3 > 1 ? _len3 - 1 : 0), _key3 = 1; _key3 < _len3; _key3++) {
-        args[_key3 - 1] = arguments[_key3];
+      for (var _len2 = arguments.length, args = new Array(_len2 > 1 ? _len2 - 1 : 0), _key2 = 1; _key2 < _len2; _key2++) {
+        args[_key2 - 1] = arguments[_key2];
       }
 
       return fn.apply(void 0, args);
@@ -222,8 +174,8 @@
     }
   };
   var average = function average() {
-    for (var _len4 = arguments.length, nums = new Array(_len4), _key4 = 0; _key4 < _len4; _key4++) {
-      nums[_key4] = arguments[_key4];
+    for (var _len3 = arguments.length, nums = new Array(_len3), _key3 = 0; _key3 < _len3; _key3++) {
+      nums[_key3] = arguments[_key3];
     }
 
     return nums.reduce(function (acc, val) {
@@ -248,21 +200,21 @@
     }, [[], []]);
   };
   var bind = function bind(fn, context) {
-    for (var _len5 = arguments.length, boundArgs = new Array(_len5 > 2 ? _len5 - 2 : 0), _key5 = 2; _key5 < _len5; _key5++) {
-      boundArgs[_key5 - 2] = arguments[_key5];
+    for (var _len4 = arguments.length, boundArgs = new Array(_len4 > 2 ? _len4 - 2 : 0), _key4 = 2; _key4 < _len4; _key4++) {
+      boundArgs[_key4 - 2] = arguments[_key4];
     }
 
     return function () {
-      for (var _len6 = arguments.length, args = new Array(_len6), _key6 = 0; _key6 < _len6; _key6++) {
-        args[_key6] = arguments[_key6];
+      for (var _len5 = arguments.length, args = new Array(_len5), _key5 = 0; _key5 < _len5; _key5++) {
+        args[_key5] = arguments[_key5];
       }
 
       return fn.apply(context, boundArgs.concat(args));
     };
   };
   var bindAll = function bindAll(obj) {
-    for (var _len7 = arguments.length, fns = new Array(_len7 > 1 ? _len7 - 1 : 0), _key7 = 1; _key7 < _len7; _key7++) {
-      fns[_key7 - 1] = arguments[_key7];
+    for (var _len6 = arguments.length, fns = new Array(_len6 > 1 ? _len6 - 1 : 0), _key6 = 1; _key6 < _len6; _key6++) {
+      fns[_key6 - 1] = arguments[_key6];
     }
 
     return fns.forEach(function (fn) {
@@ -272,13 +224,13 @@
     });
   };
   var bindKey = function bindKey(context, fn) {
-    for (var _len8 = arguments.length, boundArgs = new Array(_len8 > 2 ? _len8 - 2 : 0), _key8 = 2; _key8 < _len8; _key8++) {
-      boundArgs[_key8 - 2] = arguments[_key8];
+    for (var _len7 = arguments.length, boundArgs = new Array(_len7 > 2 ? _len7 - 2 : 0), _key7 = 2; _key7 < _len7; _key7++) {
+      boundArgs[_key7 - 2] = arguments[_key7];
     }
 
     return function () {
-      for (var _len9 = arguments.length, args = new Array(_len9), _key9 = 0; _key9 < _len9; _key9++) {
-        args[_key9] = arguments[_key9];
+      for (var _len8 = arguments.length, args = new Array(_len8), _key8 = 0; _key8 < _len8; _key8++) {
+        args[_key8] = arguments[_key8];
       }
 
       return context[fn].apply(context, boundArgs.concat(args));
@@ -308,8 +260,8 @@
     return new Blob([str]).size;
   };
   var call = function call(key) {
-    for (var _len10 = arguments.length, args = new Array(_len10 > 1 ? _len10 - 1 : 0), _key10 = 1; _key10 < _len10; _key10++) {
-      args[_key10 - 1] = arguments[_key10];
+    for (var _len9 = arguments.length, args = new Array(_len9 > 1 ? _len9 - 1 : 0), _key9 = 1; _key9 < _len9; _key9++) {
+      args[_key9 - 1] = arguments[_key9];
     }
 
     return function (context) {
@@ -343,6 +295,11 @@
 
     next();
   };
+  var checkProp = function checkProp(predicate, prop) {
+    return function (obj) {
+      return !!predicate(obj[prop]);
+    };
+  };
   var chunk = function chunk(arr, size) {
     return Array.from({
       length: Math.ceil(arr.length / size)
@@ -357,8 +314,8 @@
     return new RegExp(regExp.source, regExp.flags);
   };
   var coalesce = function coalesce() {
-    for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
-      args[_key11] = arguments[_key11];
+    for (var _len10 = arguments.length, args = new Array(_len10), _key10 = 0; _key10 < _len10; _key10++) {
+      args[_key10] = arguments[_key10];
     }
 
     return args.find(function (_) {
@@ -367,8 +324,8 @@
   };
   var coalesceFactory = function coalesceFactory(valid) {
     return function () {
-      for (var _len12 = arguments.length, args = new Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
-        args[_key12] = arguments[_key12];
+      for (var _len11 = arguments.length, args = new Array(_len11), _key11 = 0; _key11 < _len11; _key11++) {
+        args[_key11] = arguments[_key11];
       }
 
       return args.find(valid);
@@ -376,16 +333,16 @@
   };
   var collectInto = function collectInto(fn) {
     return function () {
-      for (var _len13 = arguments.length, args = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
-        args[_key13] = arguments[_key13];
+      for (var _len12 = arguments.length, args = new Array(_len12), _key12 = 0; _key12 < _len12; _key12++) {
+        args[_key12] = arguments[_key12];
       }
 
       return fn(args);
     };
   };
   var colorize = function colorize() {
-    for (var _len14 = arguments.length, args = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
-      args[_key14] = arguments[_key14];
+    for (var _len13 = arguments.length, args = new Array(_len13), _key13 = 0; _key13 < _len13; _key13++) {
+      args[_key13] = arguments[_key13];
     }
 
     return {
@@ -414,8 +371,8 @@
     return str.replace(/\s{2,}/g, ' ');
   };
   var compose = function compose() {
-    for (var _len15 = arguments.length, fns = new Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
-      fns[_key15] = arguments[_key15];
+    for (var _len14 = arguments.length, fns = new Array(_len14), _key14 = 0; _key14 < _len14; _key14++) {
+      fns[_key14] = arguments[_key14];
     }
 
     return fns.reduce(function (f, g) {
@@ -425,8 +382,8 @@
     });
   };
   var composeRight = function composeRight() {
-    for (var _len16 = arguments.length, fns = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
-      fns[_key16] = arguments[_key16];
+    for (var _len15 = arguments.length, fns = new Array(_len15), _key15 = 0; _key15 < _len15; _key15++) {
+      fns[_key15] = arguments[_key15];
     }
 
     return fns.reduce(function (f, g) {
@@ -437,8 +394,8 @@
   };
   var converge = function converge(converger, fns) {
     return function () {
-      for (var _len17 = arguments.length, args = new Array(_len17), _key17 = 0; _key17 < _len17; _key17++) {
-        args[_key17] = arguments[_key17];
+      for (var _len16 = arguments.length, args = new Array(_len16), _key16 = 0; _key16 < _len16; _key16++) {
+        args[_key16] = arguments[_key16];
       }
 
       return converger.apply(void 0, _toConsumableArray(fns.map(function (fn) {
@@ -471,11 +428,6 @@
       return acc;
     }, {});
   };
-  var countOccurrences = function countOccurrences(arr, val) {
-    return arr.reduce(function (a, v) {
-      return v === val ? a + 1 : a;
-    }, 0);
-  };
   var counter = function counter(selector, start, end) {
     var step = arguments.length > 3 && arguments[3] !== undefined ? arguments[3] : 1;
     var duration = arguments.length > 4 && arguments[4] !== undefined ? arguments[4] : 2000;
@@ -490,6 +442,14 @@
     }, Math.abs(Math.floor(duration / (end - start))));
 
     return timer;
+  };
+  var countOccurrences = function countOccurrences(arr, val) {
+    return arr.reduce(function (a, v) {
+      return v === val ? a + 1 : a;
+    }, 0);
+  };
+  var createDirIfNotExists = function createDirIfNotExists(dir) {
+    return !fs.existsSync(dir) ? fs.mkdirSync(dir) : undefined;
   };
   var createElement = function createElement(str) {
     var el = document.createElement('div');
@@ -516,14 +476,31 @@
       }
     };
   };
+  var CSVToArray = function CSVToArray(data) {
+    var delimiter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
+    var omitFirstRow = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : false;
+    return data.slice(omitFirstRow ? data.indexOf('\n') + 1 : 0).split('\n').map(function (v) {
+      return v.split(delimiter);
+    });
+  };
+  var CSVToJSON = function CSVToJSON(data) {
+    var delimiter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';
+    var titles = data.slice(0, data.indexOf('\n')).split(delimiter);
+    return data.slice(data.indexOf('\n') + 1).split('\n').map(function (v) {
+      var values = v.split(delimiter);
+      return titles.reduce(function (obj, title, index) {
+        return obj[title] = values[index], obj;
+      }, {});
+    });
+  };
   var currentURL = function currentURL() {
     return window.location.href;
   };
   var curry = function curry(fn) {
     var arity = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : fn.length;
 
-    for (var _len18 = arguments.length, args = new Array(_len18 > 2 ? _len18 - 2 : 0), _key18 = 2; _key18 < _len18; _key18++) {
-      args[_key18 - 2] = arguments[_key18];
+    for (var _len17 = arguments.length, args = new Array(_len17 > 2 ? _len17 - 2 : 0), _key17 = 2; _key17 < _len17; _key17++) {
+      args[_key17 - 2] = arguments[_key17];
     }
 
     return arity <= args.length ? fn.apply(void 0, args) : curry.bind.apply(curry, [null, fn, arity].concat(args));
@@ -537,8 +514,8 @@
     return function () {
       var _this = this;
 
-      for (var _len19 = arguments.length, args = new Array(_len19), _key19 = 0; _key19 < _len19; _key19++) {
-        args[_key19] = arguments[_key19];
+      for (var _len18 = arguments.length, args = new Array(_len18), _key18 = 0; _key18 < _len18; _key18++) {
+        args[_key18] = arguments[_key18];
       }
 
       clearTimeout(timeoutId);
@@ -560,7 +537,7 @@
     Object.keys(clone).forEach(function (key) {
       return clone[key] = _typeof(obj[key]) === 'object' ? deepClone(obj[key]) : obj[key];
     });
-    return Array.isArray(obj) ? (clone.length = obj.length) && Array.from(clone) : clone;
+    return Array.isArray(obj) && obj.length ? (clone.length = obj.length) && Array.from(clone) : Array.isArray(obj) ? Array.from(obj) : clone;
   };
   var deepFlatten = function deepFlatten(arr) {
     var _ref5;
@@ -574,6 +551,11 @@
       return !(obj[prop] instanceof Object) || Object.isFrozen(obj[prop]) ? null : deepFreeze(obj[prop]);
     }) || Object.freeze(obj);
   };
+  var deepGet = function deepGet(obj, keys) {
+    return keys.reduce(function (xs, x) {
+      return xs && xs[x] ? xs[x] : null;
+    }, obj);
+  };
   var deepMapKeys = function deepMapKeys(obj, f) {
     return Array.isArray(obj) ? obj.map(function (val) {
       return deepMapKeys(val, f);
@@ -584,15 +566,15 @@
     }, {}) : obj;
   };
   var defaults = function defaults(obj) {
-    for (var _len20 = arguments.length, defs = new Array(_len20 > 1 ? _len20 - 1 : 0), _key20 = 1; _key20 < _len20; _key20++) {
-      defs[_key20 - 1] = arguments[_key20];
+    for (var _len19 = arguments.length, defs = new Array(_len19 > 1 ? _len19 - 1 : 0), _key19 = 1; _key19 < _len19; _key19++) {
+      defs[_key19 - 1] = arguments[_key19];
     }
 
     return Object.assign.apply(Object, [{}, obj].concat(_toConsumableArray(defs.reverse()), [obj]));
   };
   var defer = function defer(fn) {
-    for (var _len21 = arguments.length, args = new Array(_len21 > 1 ? _len21 - 1 : 0), _key21 = 1; _key21 < _len21; _key21++) {
-      args[_key21 - 1] = arguments[_key21];
+    for (var _len20 = arguments.length, args = new Array(_len20 > 1 ? _len20 - 1 : 0), _key20 = 1; _key20 < _len20; _key20++) {
+      args[_key20 - 1] = arguments[_key20];
     }
 
     return setTimeout.apply(void 0, [fn, 1].concat(args));
@@ -601,8 +583,8 @@
     return deg * Math.PI / 180.0;
   };
   var delay = function delay(fn, wait) {
-    for (var _len22 = arguments.length, args = new Array(_len22 > 2 ? _len22 - 2 : 0), _key22 = 2; _key22 < _len22; _key22++) {
-      args[_key22 - 2] = arguments[_key22];
+    for (var _len21 = arguments.length, args = new Array(_len21 > 2 ? _len21 - 2 : 0), _key21 = 2; _key21 < _len21; _key21++) {
+      args[_key21 - 2] = arguments[_key21];
     }
 
     return setTimeout.apply(void 0, [fn, wait].concat(args));
@@ -618,8 +600,8 @@
   };
   var differenceBy = function differenceBy(a, b, fn) {
     var s = new Set(b.map(fn));
-    return a.filter(function (x) {
-      return !s.has(fn(x));
+    return a.map(fn).filter(function (el) {
+      return !s.has(el);
     });
   };
   var differenceWith = function differenceWith(arr, val, comp) {
@@ -823,8 +805,8 @@
   };
   var flip = function flip(fn) {
     return function (first) {
-      for (var _len23 = arguments.length, rest = new Array(_len23 > 1 ? _len23 - 1 : 0), _key23 = 1; _key23 < _len23; _key23++) {
-        rest[_key23 - 1] = arguments[_key23];
+      for (var _len22 = arguments.length, rest = new Array(_len22 > 1 ? _len22 - 1 : 0), _key22 = 1; _key22 < _len22; _key22++) {
+        rest[_key22 - 1] = arguments[_key22];
       }
 
       return fn.apply(void 0, rest.concat([first]));
@@ -832,16 +814,6 @@
   };
   var forEachRight = function forEachRight(arr, callback) {
     return arr.slice(0).reverse().forEach(callback);
-  };
-  var forOwn = function forOwn(obj, fn) {
-    return Object.keys(obj).forEach(function (key) {
-      return fn(obj[key], key, obj);
-    });
-  };
-  var forOwnRight = function forOwnRight(obj, fn) {
-    return Object.keys(obj).reverse().forEach(function (key) {
-      return fn(obj[key], key, obj);
-    });
   };
   var formatDuration = function formatDuration(ms) {
     if (ms < 0) ms = -ms;
@@ -862,6 +834,25 @@
       return "".concat(val, " ").concat(key).concat(val !== 1 ? 's' : '');
     }).join(', ');
   };
+  var formToObject = function formToObject(form) {
+    return Array.from(new FormData(form)).reduce(function (acc, _ref12) {
+      var _ref13 = _slicedToArray(_ref12, 2),
+          key = _ref13[0],
+          value = _ref13[1];
+
+      return _objectSpread({}, acc, _defineProperty({}, key, value));
+    }, {});
+  };
+  var forOwn = function forOwn(obj, fn) {
+    return Object.keys(obj).forEach(function (key) {
+      return fn(obj[key], key, obj);
+    });
+  };
+  var forOwnRight = function forOwnRight(obj, fn) {
+    return Object.keys(obj).reverse().forEach(function (key) {
+      return fn(obj[key], key, obj);
+    });
+  };
   var fromCamelCase = function fromCamelCase(str) {
     var separator = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : '_';
     return str.replace(/([a-z\d])([A-Z])/g, '$1' + separator + '$2').replace(/([A-Z]+)([A-Z][a-z\d]+)/g, '$1' + separator + '$2').toLowerCase();
@@ -880,8 +871,8 @@
       return !y ? x : gcd(y, x % y);
     };
 
-    for (var _len24 = arguments.length, arr = new Array(_len24), _key24 = 0; _key24 < _len24; _key24++) {
-      arr[_key24] = arguments[_key24];
+    for (var _len23 = arguments.length, arr = new Array(_len23), _key23 = 0; _key23 < _len23; _key23++) {
+      arr[_key23] = arguments[_key23];
     }
 
     return arr.concat().reduce(function (a, b) {
@@ -898,8 +889,8 @@
     });
   };
   var get = function get(from) {
-    for (var _len25 = arguments.length, selectors = new Array(_len25 > 1 ? _len25 - 1 : 0), _key25 = 1; _key25 < _len25; _key25++) {
-      selectors[_key25 - 1] = arguments[_key25];
+    for (var _len24 = arguments.length, selectors = new Array(_len24 > 1 ? _len24 - 1 : 0), _key24 = 1; _key24 < _len24; _key24++) {
+      selectors[_key24 - 1] = arguments[_key24];
     }
 
     return selectors.concat().map(function (s) {
@@ -961,8 +952,8 @@
     return el.classList.contains(className);
   };
   var hasFlags = function hasFlags() {
-    for (var _len26 = arguments.length, flags = new Array(_len26), _key26 = 0; _key26 < _len26; _key26++) {
-      flags[_key26] = arguments[_key26];
+    for (var _len25 = arguments.length, flags = new Array(_len25), _key25 = 0; _key25 < _len25; _key25++) {
+      flags[_key25] = arguments[_key25];
     }
 
     return flags.every(function (flag) {
@@ -1001,8 +992,8 @@
     return 'rgb' + (alpha ? 'a' : '') + '(' + (h >>> (alpha ? 24 : 16)) + ', ' + ((h & (alpha ? 0x00ff0000 : 0x00ff00)) >>> (alpha ? 16 : 8)) + ', ' + ((h & (alpha ? 0x0000ff00 : 0x0000ff)) >>> (alpha ? 8 : 0)) + (alpha ? ", ".concat(h & 0x000000ff) : '') + ')';
   };
   var hide = function hide() {
-    for (var _len27 = arguments.length, el = new Array(_len27), _key27 = 0; _key27 < _len27; _key27++) {
-      el[_key27] = arguments[_key27];
+    for (var _len26 = arguments.length, el = new Array(_len26), _key26 = 0; _key26 < _len26; _key26++) {
+      el[_key26] = arguments[_key26];
     }
 
     return el.concat().forEach(function (e) {
@@ -1053,17 +1044,6 @@
 
     return 1000 * iterations / (performance.now() - before);
   };
-  var inRange = function inRange(n, start) {
-    var end = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
-
-    if (end && start > end) {
-      var _ref12 = [start, end];
-      end = _ref12[0];
-      start = _ref12[1];
-    }
-
-    return end == null ? n >= 0 && n < start : n >= start && n < end;
-  };
   var indentString = function indentString(str, count) {
     var indent = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ' ';
     return str.replace(/^/gm, indent.repeat(count));
@@ -1109,8 +1089,8 @@
     return Array(n).fill(val);
   };
   var initializeNDArray = function initializeNDArray(val) {
-    for (var _len28 = arguments.length, args = new Array(_len28 > 1 ? _len28 - 1 : 0), _key28 = 1; _key28 < _len28; _key28++) {
-      args[_key28 - 1] = arguments[_key28];
+    for (var _len27 = arguments.length, args = new Array(_len27 > 1 ? _len27 - 1 : 0), _key27 = 1; _key27 < _len27; _key27++) {
+      args[_key27 - 1] = arguments[_key27];
     }
 
     return args.length === 0 ? val : Array.from({
@@ -1118,6 +1098,17 @@
     }).map(function () {
       return initializeNDArray.apply(void 0, [val].concat(_toConsumableArray(args.slice(1))));
     });
+  };
+  var inRange = function inRange(n, start) {
+    var end = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+    if (end && start > end) {
+      var _ref14 = [start, end];
+      end = _ref14[0];
+      start = _ref14[1];
+    }
+
+    return end == null ? n >= 0 && n < start : n >= start && n < end;
   };
   var insertAfter = function insertAfter(el, htmlString) {
     return el.insertAdjacentHTML('afterend', htmlString);
@@ -1211,7 +1202,7 @@
     return val === null;
   };
   var isNumber = function isNumber(val) {
-    return typeof val === 'number';
+    return typeof val === 'number' && val === val;
   };
   var isObject = function isObject(obj) {
     return obj === Object(obj);
@@ -1309,6 +1300,17 @@
       return i === arr.length - 2 ? acc + val + end : i === arr.length - 1 ? acc + val : acc + val + separator;
     }, '');
   };
+  var JSONtoCSV = function JSONtoCSV(arr, columns) {
+    var delimiter = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : ',';
+    return [columns.join(delimiter)].concat(_toConsumableArray(arr.map(function (obj) {
+      return columns.reduce(function (acc, key) {
+        return "".concat(acc).concat(!acc.length ? '' : delimiter, "\"").concat(!obj[key] ? '' : obj[key], "\"");
+      }, '');
+    }))).join('\n');
+  };
+  var JSONToFile = function JSONToFile(obj, filename) {
+    return fs.writeFile("".concat(filename, ".json"), JSON.stringify(obj, null, 2));
+  };
   var last = function last(arr) {
     return arr[arr.length - 1];
   };
@@ -1321,8 +1323,8 @@
       return x * y / gcd(x, y);
     };
 
-    for (var _len29 = arguments.length, arr = new Array(_len29), _key29 = 0; _key29 < _len29; _key29++) {
-      arr[_key29] = arguments[_key29];
+    for (var _len28 = arguments.length, arr = new Array(_len28), _key28 = 0; _key28 < _len28; _key28++) {
+      arr[_key28] = arguments[_key28];
     }
 
     return arr.concat().reduce(function (a, b) {
@@ -1330,8 +1332,8 @@
     });
   };
   var longestItem = function longestItem() {
-    for (var _len30 = arguments.length, vals = new Array(_len30), _key30 = 0; _key30 < _len30; _key30++) {
-      vals[_key30] = arguments[_key30];
+    for (var _len29 = arguments.length, vals = new Array(_len29), _key29 = 0; _key29 < _len29; _key29++) {
+      vals[_key29] = arguments[_key29];
     }
 
     return vals.reduce(function (a, x) {
@@ -1360,6 +1362,9 @@
       acc[fn(obj[k], k, obj)] = obj[k];
       return acc;
     }, {});
+  };
+  var mapNumRange = function mapNumRange(num, inMin, inMax, outMin, outMax) {
+    return (num - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;
   };
   var mapObject = function mapObject(arr, fn) {
     return function (a) {
@@ -1402,8 +1407,8 @@
   var maxDate = function maxDate() {
     var _Math$max;
 
-    for (var _len31 = arguments.length, dates = new Array(_len31), _key31 = 0; _key31 < _len31; _key31++) {
-      dates[_key31] = arguments[_key31];
+    for (var _len30 = arguments.length, dates = new Array(_len30), _key30 = 0; _key30 < _len30; _key30++) {
+      dates[_key30] = arguments[_key30];
     }
 
     return new Date((_Math$max = Math.max).apply.apply(_Math$max, [null].concat(dates)));
@@ -1433,8 +1438,8 @@
     return cached;
   };
   var merge = function merge() {
-    for (var _len32 = arguments.length, objs = new Array(_len32), _key32 = 0; _key32 < _len32; _key32++) {
-      objs[_key32] = arguments[_key32];
+    for (var _len31 = arguments.length, objs = new Array(_len31), _key31 = 0; _key31 < _len31; _key31++) {
+      objs[_key31] = arguments[_key31];
     }
 
     return objs.concat().reduce(function (acc, obj) {
@@ -1444,14 +1449,14 @@
       }, {});
     }, {});
   };
-  var midpoint = function midpoint(_ref13, _ref14) {
-    var _ref15 = _slicedToArray(_ref13, 2),
-        x1 = _ref15[0],
-        y1 = _ref15[1];
+  var midpoint = function midpoint(_ref15, _ref16) {
+    var _ref17 = _slicedToArray(_ref15, 2),
+        x1 = _ref17[0],
+        y1 = _ref17[1];
 
-    var _ref16 = _slicedToArray(_ref14, 2),
-        x2 = _ref16[0],
-        y2 = _ref16[1];
+    var _ref18 = _slicedToArray(_ref16, 2),
+        x2 = _ref18[0],
+        y2 = _ref18[1];
 
     return [(x1 + x2) / 2, (y1 + y2) / 2];
   };
@@ -1463,8 +1468,8 @@
   var minDate = function minDate() {
     var _Math$min;
 
-    for (var _len33 = arguments.length, dates = new Array(_len33), _key33 = 0; _key33 < _len33; _key33++) {
-      dates[_key33] = arguments[_key33];
+    for (var _len32 = arguments.length, dates = new Array(_len32), _key32 = 0; _key32 < _len32; _key32++) {
+      dates[_key32] = arguments[_key32];
     }
 
     return new Date((_Math$min = Math.min).apply.apply(_Math$min, [null].concat(dates)));
@@ -1513,8 +1518,8 @@
   };
   var nthArg = function nthArg(n) {
     return function () {
-      for (var _len34 = arguments.length, args = new Array(_len34), _key34 = 0; _key34 < _len34; _key34++) {
-        args[_key34] = arguments[_key34];
+      for (var _len33 = arguments.length, args = new Array(_len33), _key33 = 0; _key33 < _len33; _key33++) {
+        args[_key33] = arguments[_key33];
       }
 
       return args.slice(n)[0];
@@ -1525,10 +1530,10 @@
     return (n === -1 ? arr.slice(n) : arr.slice(n, n + 1))[0];
   };
   var objectFromPairs = function objectFromPairs(arr) {
-    return arr.reduce(function (a, _ref17) {
-      var _ref18 = _slicedToArray(_ref17, 2),
-          key = _ref18[0],
-          val = _ref18[1];
+    return arr.reduce(function (a, _ref19) {
+      var _ref20 = _slicedToArray(_ref19, 2),
+          key = _ref20[0],
+          val = _ref20[1];
 
       return a[key] = val, a;
     }, {});
@@ -1585,6 +1590,19 @@
     el.addEventListener(evt, opts.target ? delegatorFn : fn, opts.options || false);
     if (opts.target) return delegatorFn;
   };
+  var once = function once(fn) {
+    var called = false;
+    return function () {
+      if (called) return;
+      called = true;
+
+      for (var _len34 = arguments.length, args = new Array(_len34), _key34 = 0; _key34 < _len34; _key34++) {
+        args[_key34] = arguments[_key34];
+      }
+
+      return fn.apply(this, args);
+    };
+  };
   var onUserInputChange = function onUserInputChange(callback) {
     var type = 'mouse',
         lastTime = 0;
@@ -1600,27 +1618,14 @@
       type = 'touch', callback(type), document.addEventListener('mousemove', mousemoveHandler);
     });
   };
-  var once = function once(fn) {
-    var called = false;
-    return function () {
-      if (called) return;
-      called = true;
-
-      for (var _len35 = arguments.length, args = new Array(_len35), _key35 = 0; _key35 < _len35; _key35++) {
-        args[_key35] = arguments[_key35];
-      }
-
-      return fn.apply(this, args);
-    };
-  };
   var orderBy = function orderBy(arr, props, orders) {
     return _toConsumableArray(arr).sort(function (a, b) {
       return props.reduce(function (acc, prop, i) {
         if (acc === 0) {
-          var _ref19 = orders && orders[i] === 'desc' ? [b[prop], a[prop]] : [a[prop], b[prop]],
-              _ref20 = _slicedToArray(_ref19, 2),
-              p1 = _ref20[0],
-              p2 = _ref20[1];
+          var _ref21 = orders && orders[i] === 'desc' ? [b[prop], a[prop]] : [a[prop], b[prop]],
+              _ref22 = _slicedToArray(_ref21, 2),
+              p1 = _ref22[0],
+              p2 = _ref22[1];
 
           acc = p1 > p2 ? 1 : p1 < p2 ? -1 : 0;
         }
@@ -1630,13 +1635,13 @@
     });
   };
   var over = function over() {
-    for (var _len36 = arguments.length, fns = new Array(_len36), _key36 = 0; _key36 < _len36; _key36++) {
-      fns[_key36] = arguments[_key36];
+    for (var _len35 = arguments.length, fns = new Array(_len35), _key35 = 0; _key35 < _len35; _key35++) {
+      fns[_key35] = arguments[_key35];
     }
 
     return function () {
-      for (var _len37 = arguments.length, args = new Array(_len37), _key37 = 0; _key37 < _len37; _key37++) {
-        args[_key37] = arguments[_key37];
+      for (var _len36 = arguments.length, args = new Array(_len36), _key36 = 0; _key36 < _len36; _key36++) {
+        args[_key36] = arguments[_key36];
       }
 
       return fns.map(function (fn) {
@@ -1646,8 +1651,8 @@
   };
   var overArgs = function overArgs(fn, transforms) {
     return function () {
-      for (var _len38 = arguments.length, args = new Array(_len38), _key38 = 0; _key38 < _len38; _key38++) {
-        args[_key38] = arguments[_key38];
+      for (var _len37 = arguments.length, args = new Array(_len37), _key37 = 0; _key37 < _len37; _key37++) {
+        args[_key37] = arguments[_key37];
       }
 
       return fn.apply(void 0, _toConsumableArray(args.map(function (val, i) {
@@ -1672,26 +1677,26 @@
     }, {});
   };
   var partial = function partial(fn) {
-    for (var _len39 = arguments.length, partials = new Array(_len39 > 1 ? _len39 - 1 : 0), _key39 = 1; _key39 < _len39; _key39++) {
-      partials[_key39 - 1] = arguments[_key39];
+    for (var _len38 = arguments.length, partials = new Array(_len38 > 1 ? _len38 - 1 : 0), _key38 = 1; _key38 < _len38; _key38++) {
+      partials[_key38 - 1] = arguments[_key38];
     }
 
     return function () {
-      for (var _len40 = arguments.length, args = new Array(_len40), _key40 = 0; _key40 < _len40; _key40++) {
-        args[_key40] = arguments[_key40];
+      for (var _len39 = arguments.length, args = new Array(_len39), _key39 = 0; _key39 < _len39; _key39++) {
+        args[_key39] = arguments[_key39];
       }
 
       return fn.apply(void 0, partials.concat(args));
     };
   };
   var partialRight = function partialRight(fn) {
-    for (var _len41 = arguments.length, partials = new Array(_len41 > 1 ? _len41 - 1 : 0), _key41 = 1; _key41 < _len41; _key41++) {
-      partials[_key41 - 1] = arguments[_key41];
+    for (var _len40 = arguments.length, partials = new Array(_len40 > 1 ? _len40 - 1 : 0), _key40 = 1; _key40 < _len40; _key40++) {
+      partials[_key40 - 1] = arguments[_key40];
     }
 
     return function () {
-      for (var _len42 = arguments.length, args = new Array(_len42), _key42 = 0; _key42 < _len42; _key42++) {
-        args[_key42] = arguments[_key42];
+      for (var _len41 = arguments.length, args = new Array(_len41), _key41 = 0; _key41 < _len41; _key41++) {
+        args[_key41] = arguments[_key41];
       }
 
       return fn.apply(void 0, args.concat(partials));
@@ -1729,8 +1734,8 @@
     }, {});
   };
   var pipeAsyncFunctions = function pipeAsyncFunctions() {
-    for (var _len43 = arguments.length, fns = new Array(_len43), _key43 = 0; _key43 < _len43; _key43++) {
-      fns[_key43] = arguments[_key43];
+    for (var _len42 = arguments.length, fns = new Array(_len42), _key42 = 0; _key42 < _len42; _key42++) {
+      fns[_key42] = arguments[_key42];
     }
 
     return function (arg) {
@@ -1740,8 +1745,8 @@
     };
   };
   var pipeFunctions = function pipeFunctions() {
-    for (var _len44 = arguments.length, fns = new Array(_len44), _key44 = 0; _key44 < _len44; _key44++) {
-      fns[_key44] = arguments[_key44];
+    for (var _len43 = arguments.length, fns = new Array(_len43), _key43 = 0; _key43 < _len43; _key43++) {
+      fns[_key43] = arguments[_key43];
     }
 
     return fns.reduce(function (f, g) {
@@ -1808,8 +1813,8 @@
   };
   var promisify = function promisify(func) {
     return function () {
-      for (var _len45 = arguments.length, args = new Array(_len45), _key45 = 0; _key45 < _len45; _key45++) {
-        args[_key45] = arguments[_key45];
+      for (var _len44 = arguments.length, args = new Array(_len44), _key44 = 0; _key44 < _len44; _key44++) {
+        args[_key44] = arguments[_key44];
       }
 
       return new Promise(function (resolve, reject) {
@@ -1820,8 +1825,8 @@
     };
   };
   var pull = function pull(arr) {
-    for (var _len46 = arguments.length, args = new Array(_len46 > 1 ? _len46 - 1 : 0), _key46 = 1; _key46 < _len46; _key46++) {
-      args[_key46 - 1] = arguments[_key46];
+    for (var _len45 = arguments.length, args = new Array(_len45 > 1 ? _len45 - 1 : 0), _key45 = 1; _key45 < _len45; _key45++) {
+      args[_key45 - 1] = arguments[_key45];
     }
 
     var argState = Array.isArray(args[0]) ? args[0] : args;
@@ -1861,8 +1866,8 @@
     return removed;
   };
   var pullBy = function pullBy(arr) {
-    for (var _len47 = arguments.length, args = new Array(_len47 > 1 ? _len47 - 1 : 0), _key47 = 1; _key47 < _len47; _key47++) {
-      args[_key47 - 1] = arguments[_key47];
+    for (var _len46 = arguments.length, args = new Array(_len46 > 1 ? _len46 - 1 : 0), _key46 = 1; _key46 < _len46; _key46++) {
+      args[_key46 - 1] = arguments[_key46];
     }
 
     var length = args.length;
@@ -1905,8 +1910,8 @@
   };
   var rearg = function rearg(fn, indexes) {
     return function () {
-      for (var _len48 = arguments.length, args = new Array(_len48), _key48 = 0; _key48 < _len48; _key48++) {
-        args[_key48] = arguments[_key48];
+      for (var _len47 = arguments.length, args = new Array(_len47), _key47 = 0; _key47 < _len47; _key47++) {
+        args[_key47] = arguments[_key47];
       }
 
       return fn.apply(void 0, _toConsumableArray(indexes.map(function (i) {
@@ -1946,6 +1951,14 @@
     var asLink = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : true;
     return asLink ? window.location.href = url : window.location.replace(url);
   };
+  var reducedFilter = function reducedFilter(data, keys, fn) {
+    return data.filter(fn).map(function (el) {
+      return keys.reduce(function (acc, key) {
+        acc[key] = el[key];
+        return acc;
+      }, {});
+    });
+  };
   var reduceSuccessive = function reduceSuccessive(arr, fn, acc) {
     return arr.reduce(function (res, val, i, arr) {
       return res.push(fn(res.slice(-1)[0], val, i, arr)), res;
@@ -1957,14 +1970,6 @@
     };
     return arr.reduce(function (a, b) {
       return comparator(a, b) >= 0 ? b : a;
-    });
-  };
-  var reducedFilter = function reducedFilter(data, keys, fn) {
-    return data.filter(fn).map(function (el) {
-      return keys.reduce(function (acc, key) {
-        acc[key] = el[key];
-        return acc;
-      }, {});
     });
   };
   var reject = function reject(pred, array) {
@@ -1989,6 +1994,9 @@
   var reverseString = function reverseString(str) {
     return _toConsumableArray(str).reverse().join('');
   };
+  var RGBToHex = function RGBToHex(r, g, b) {
+    return ((r << 16) + (g << 8) + b).toString(16).padStart(6, '0');
+  };
   var round = function round(n) {
     var decimals = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     return Number("".concat(Math.round("".concat(n, "e").concat(decimals)), "e-").concat(decimals));
@@ -1998,8 +2006,8 @@
       type: 'application/javascript; charset=utf-8'
     }));
     return new Promise(function (res, rej) {
-      worker.onmessage = function (_ref21) {
-        var data = _ref21.data;
+      worker.onmessage = function (_ref23) {
+        var data = _ref23.data;
         res(data), worker.terminate();
       };
 
@@ -2016,18 +2024,18 @@
   var sample = function sample(arr) {
     return arr[Math.floor(Math.random() * arr.length)];
   };
-  var sampleSize = function sampleSize(_ref22) {
-    var _ref23 = _toArray(_ref22),
-        arr = _ref23.slice(0);
+  var sampleSize = function sampleSize(_ref24) {
+    var _ref25 = _toArray(_ref24),
+        arr = _ref25.slice(0);
 
     var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;
     var m = arr.length;
 
     while (m) {
       var i = Math.floor(Math.random() * m--);
-      var _ref24 = [arr[i], arr[m]];
-      arr[m] = _ref24[0];
-      arr[i] = _ref24[1];
+      var _ref26 = [arr[i], arr[m]];
+      arr[m] = _ref26[0];
+      arr[i] = _ref26[1];
     }
 
     return arr.slice(0, n);
@@ -2049,6 +2057,11 @@
   var serializeCookie = function serializeCookie(name, val) {
     return "".concat(encodeURIComponent(name), "=").concat(encodeURIComponent(val));
   };
+  var serializeForm = function serializeForm(form) {
+    return Array.from(new FormData(form), function (field) {
+      return field.map(encodeURIComponent).join('=');
+    }).join('&');
+  };
   var setStyle = function setStyle(el, ruleName, val) {
     return el.style[ruleName] = val;
   };
@@ -2059,32 +2072,32 @@
     var index = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 0;
     var delCount = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : 0;
 
-    for (var _len49 = arguments.length, elements = new Array(_len49 > 3 ? _len49 - 3 : 0), _key49 = 3; _key49 < _len49; _key49++) {
-      elements[_key49 - 3] = arguments[_key49];
+    for (var _len48 = arguments.length, elements = new Array(_len48 > 3 ? _len48 - 3 : 0), _key48 = 3; _key48 < _len48; _key48++) {
+      elements[_key48 - 3] = arguments[_key48];
     }
 
     return arr.slice(0, index).concat(elements).concat(arr.slice(index + delCount));
   };
   var show = function show() {
-    for (var _len50 = arguments.length, el = new Array(_len50), _key50 = 0; _key50 < _len50; _key50++) {
-      el[_key50] = arguments[_key50];
+    for (var _len49 = arguments.length, el = new Array(_len49), _key49 = 0; _key49 < _len49; _key49++) {
+      el[_key49] = arguments[_key49];
     }
 
     return el.concat().forEach(function (e) {
       return e.style.display = '';
     });
   };
-  var shuffle = function shuffle(_ref25) {
-    var _ref26 = _toArray(_ref25),
-        arr = _ref26.slice(0);
+  var shuffle = function shuffle(_ref27) {
+    var _ref28 = _toArray(_ref27),
+        arr = _ref28.slice(0);
 
     var m = arr.length;
 
     while (m) {
       var i = Math.floor(Math.random() * m--);
-      var _ref27 = [arr[i], arr[m]];
-      arr[m] = _ref27[0];
-      arr[i] = _ref27[1];
+      var _ref29 = [arr[i], arr[m]];
+      arr[m] = _ref29[0];
+      arr[i] = _ref29[1];
     }
 
     return arr;
@@ -2158,8 +2171,8 @@
       };
     }).sort(function (a, b) {
       return compare(a.item, b.item) || a.index - b.index;
-    }).map(function (_ref28) {
-      var item = _ref28.item;
+    }).map(function (_ref30) {
+      var item = _ref30.item;
       return item;
     });
   };
@@ -2186,8 +2199,8 @@
     return str.replace(/<[^>]*>/g, '');
   };
   var sum = function sum() {
-    for (var _len51 = arguments.length, arr = new Array(_len51), _key51 = 0; _key51 < _len51; _key51++) {
-      arr[_key51] = arguments[_key51];
+    for (var _len50 = arguments.length, arr = new Array(_len50), _key50 = 0; _key50 < _len50; _key50++) {
+      arr[_key50] = arguments[_key50];
     }
 
     return arr.concat().reduce(function (acc, val) {
@@ -2310,17 +2323,17 @@
       }
     };
   };
-  var timeTaken = function timeTaken(callback) {
-    console.time('timeTaken');
-    var r = callback();
-    console.timeEnd('timeTaken');
-    return r;
-  };
   var times = function times(n, fn) {
     var context = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : undefined;
     var i = 0;
 
     while (fn.call(context, i) !== false && ++i < n) {}
+  };
+  var timeTaken = function timeTaken(callback) {
+    console.time('timeTaken');
+    var r = callback();
+    console.timeEnd('timeTaken');
+    return r;
   };
   var toCamelCase = function toCamelCase(str) {
     var s = str && str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g).map(function (x) {
@@ -2338,6 +2351,9 @@
   var toDecimalMark = function toDecimalMark(num) {
     return num.toLocaleString('en-US');
   };
+  var toggleClass = function toggleClass(el, className) {
+    return el.classList.toggle(className);
+  };
   var toHash = function toHash(object, key) {
     return Array.prototype.reduce.call(object, function (acc, data, index) {
       return acc[!key ? index : data[key]] = data, acc;
@@ -2347,6 +2363,11 @@
     return str && str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g).map(function (x) {
       return x.toLowerCase();
     }).join('-');
+  };
+  var tomorrow = function tomorrow() {
+    var t = new Date();
+    t.setDate(t.getDate() + 1);
+    return t.toISOString().split('T')[0];
   };
   var toOrdinalSuffix = function toOrdinalSuffix(num) {
     var int = parseInt(num),
@@ -2368,16 +2389,6 @@
     return str.match(/[A-Z]{2,}(?=[A-Z][a-z]+[0-9]*|\b)|[A-Z]?[a-z]+[0-9]*|[A-Z]|[0-9]+/g).map(function (x) {
       return x.charAt(0).toUpperCase() + x.slice(1);
     }).join(' ');
-  };
-  var toggleClass = function toggleClass(el, className) {
-    return el.classList.toggle(className);
-  };
-  var tomorrow = function tomorrow() {
-    var long = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;
-    var t = new Date();
-    t.setDate(t.getDate() + 1);
-    var ret = "".concat(t.getFullYear(), "-").concat(String(t.getMonth() + 1).padStart(2, '0'), "-").concat(String(t.getDate()).padStart(2, '0'));
-    return !long ? ret : "".concat(ret, "T00:00:00");
   };
   var transform = function transform(obj, fn, acc) {
     return Object.keys(obj).reduce(function (a, k) {
@@ -2413,8 +2424,8 @@
         };
       };
 
-      for (var _len52 = arguments.length, args = new Array(_len52), _key52 = 0; _key52 < _len52; _key52++) {
-        args[_key52] = arguments[_key52];
+      for (var _len51 = arguments.length, args = new Array(_len51), _key51 = 0; _key51 < _len51; _key51++) {
+        args[_key51] = arguments[_key51];
       }
 
       if (n > args.length) throw new RangeError('Arguments too few!');
@@ -2527,8 +2538,36 @@
       return fn.apply(void 0, _toConsumableArray(val));
     });
   };
+  var URLJoin = function URLJoin() {
+    for (var _len52 = arguments.length, args = new Array(_len52), _key52 = 0; _key52 < _len52; _key52++) {
+      args[_key52] = arguments[_key52];
+    }
+
+    return args.join('/').replace(/[\/]+/g, '/').replace(/^(.+):\//, '$1://').replace(/^file:/, 'file:/').replace(/\/(\?|&|#[^!])/g, '$1').replace(/\?/g, '&').replace('&', '?');
+  };
+  var UUIDGeneratorBrowser = function UUIDGeneratorBrowser() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
+      return (c ^ crypto.getRandomValues(new Uint8Array(1))[0] & 15 >> c / 4).toString(16);
+    });
+  };
+  var UUIDGeneratorNode = function UUIDGeneratorNode() {
+    return ([1e7] + -1e3 + -4e3 + -8e3 + -1e11).replace(/[018]/g, function (c) {
+      return (c ^ crypto.randomBytes(1)[0] & 15 >> c / 4).toString(16);
+    });
+  };
   var validateNumber = function validateNumber(n) {
     return !isNaN(parseFloat(n)) && isFinite(n) && Number(n) == n;
+  };
+  var vectorDistance = function vectorDistance() {
+    for (var _len53 = arguments.length, coords = new Array(_len53), _key53 = 0; _key53 < _len53; _key53++) {
+      coords[_key53] = arguments[_key53];
+    }
+
+    var pointLength = Math.trunc(coords.length / 2);
+    var sum = coords.slice(0, pointLength).reduce(function (acc, val, i) {
+      return acc + Math.pow(val - coords[pointLength + i], 2);
+    }, 0);
+    return Math.sqrt(sum);
   };
   var when = function when(pred, whenTrue) {
     return function (x) {
@@ -2536,8 +2575,8 @@
     };
   };
   var without = function without(arr) {
-    for (var _len53 = arguments.length, args = new Array(_len53 > 1 ? _len53 - 1 : 0), _key53 = 1; _key53 < _len53; _key53++) {
-      args[_key53 - 1] = arguments[_key53];
+    for (var _len54 = arguments.length, args = new Array(_len54 > 1 ? _len54 - 1 : 0), _key54 = 1; _key54 < _len54; _key54++) {
+      args[_key54 - 1] = arguments[_key54];
     }
 
     return arr.filter(function (v) {
@@ -2560,8 +2599,8 @@
     return /^(y|yes)$/i.test(val) ? true : /^(n|no)$/i.test(val) ? false : def;
   };
   var zip = function zip() {
-    for (var _len54 = arguments.length, arrays = new Array(_len54), _key54 = 0; _key54 < _len54; _key54++) {
-      arrays[_key54] = arguments[_key54];
+    for (var _len55 = arguments.length, arrays = new Array(_len55), _key55 = 0; _key55 < _len55; _key55++) {
+      arrays[_key55] = arguments[_key55];
     }
 
     var maxLength = Math.max.apply(Math, _toConsumableArray(arrays.map(function (x) {
@@ -2583,8 +2622,8 @@
     }, {});
   };
   var zipWith = function zipWith() {
-    for (var _len55 = arguments.length, array = new Array(_len55), _key55 = 0; _key55 < _len55; _key55++) {
-      array[_key55] = arguments[_key55];
+    for (var _len56 = arguments.length, array = new Array(_len56), _key56 = 0; _key56 < _len56; _key56++) {
+      array[_key56] = arguments[_key56];
     }
 
     var fn = typeof array[array.length - 1] === 'function' ? array.pop() : undefined;
@@ -2601,14 +2640,6 @@
     });
   };
 
-  exports.CSVToArray = CSVToArray;
-  exports.CSVToJSON = CSVToJSON;
-  exports.JSONToFile = JSONToFile;
-  exports.JSONtoCSV = JSONtoCSV;
-  exports.RGBToHex = RGBToHex;
-  exports.URLJoin = URLJoin;
-  exports.UUIDGeneratorBrowser = UUIDGeneratorBrowser;
-  exports.UUIDGeneratorNode = UUIDGeneratorNode;
   exports.all = all;
   exports.allEqual = allEqual;
   exports.any = any;
@@ -2634,6 +2665,7 @@
   exports.capitalizeEveryWord = capitalizeEveryWord;
   exports.castArray = castArray;
   exports.chainAsync = chainAsync;
+  exports.checkProp = checkProp;
   exports.chunk = chunk;
   exports.clampNumber = clampNumber;
   exports.cloneRegExp = cloneRegExp;
@@ -2648,10 +2680,13 @@
   exports.converge = converge;
   exports.copyToClipboard = copyToClipboard;
   exports.countBy = countBy;
-  exports.countOccurrences = countOccurrences;
   exports.counter = counter;
+  exports.countOccurrences = countOccurrences;
+  exports.createDirIfNotExists = createDirIfNotExists;
   exports.createElement = createElement;
   exports.createEventHub = createEventHub;
+  exports.CSVToArray = CSVToArray;
+  exports.CSVToJSON = CSVToJSON;
   exports.currentURL = currentURL;
   exports.curry = curry;
   exports.dayOfYear = dayOfYear;
@@ -2660,6 +2695,7 @@
   exports.deepClone = deepClone;
   exports.deepFlatten = deepFlatten;
   exports.deepFreeze = deepFreeze;
+  exports.deepGet = deepGet;
   exports.deepMapKeys = deepMapKeys;
   exports.defaults = defaults;
   exports.defer = defer;
@@ -2697,9 +2733,10 @@
   exports.flattenObject = flattenObject;
   exports.flip = flip;
   exports.forEachRight = forEachRight;
+  exports.formatDuration = formatDuration;
+  exports.formToObject = formToObject;
   exports.forOwn = forOwn;
   exports.forOwnRight = forOwnRight;
-  exports.formatDuration = formatDuration;
   exports.fromCamelCase = fromCamelCase;
   exports.functionName = functionName;
   exports.functions = functions;
@@ -2727,7 +2764,6 @@
   exports.httpPost = httpPost;
   exports.httpsRedirect = httpsRedirect;
   exports.hz = hz;
-  exports.inRange = inRange;
   exports.indentString = indentString;
   exports.indexOfAll = indexOfAll;
   exports.initial = initial;
@@ -2736,6 +2772,7 @@
   exports.initializeArrayWithRangeRight = initializeArrayWithRangeRight;
   exports.initializeArrayWithValues = initializeArrayWithValues;
   exports.initializeNDArray = initializeNDArray;
+  exports.inRange = inRange;
   exports.insertAfter = insertAfter;
   exports.insertBefore = insertBefore;
   exports.intersection = intersection;
@@ -2779,12 +2816,15 @@
   exports.isValidJSON = isValidJSON;
   exports.isWritableStream = isWritableStream;
   exports.join = join;
+  exports.JSONtoCSV = JSONtoCSV;
+  exports.JSONToFile = JSONToFile;
   exports.last = last;
   exports.lcm = lcm;
   exports.longestItem = longestItem;
   exports.lowercaseKeys = lowercaseKeys;
   exports.luhnCheck = luhnCheck;
   exports.mapKeys = mapKeys;
+  exports.mapNumRange = mapNumRange;
   exports.mapObject = mapObject;
   exports.mapString = mapString;
   exports.mapValues = mapValues;
@@ -2816,8 +2856,8 @@
   exports.omit = omit;
   exports.omitBy = omitBy;
   exports.on = on;
-  exports.onUserInputChange = onUserInputChange;
   exports.once = once;
+  exports.onUserInputChange = onUserInputChange;
   exports.orderBy = orderBy;
   exports.over = over;
   exports.overArgs = overArgs;
@@ -2852,14 +2892,15 @@
   exports.rearg = rearg;
   exports.recordAnimationFrames = recordAnimationFrames;
   exports.redirect = redirect;
+  exports.reducedFilter = reducedFilter;
   exports.reduceSuccessive = reduceSuccessive;
   exports.reduceWhich = reduceWhich;
-  exports.reducedFilter = reducedFilter;
   exports.reject = reject;
   exports.remove = remove;
   exports.removeNonASCII = removeNonASCII;
   exports.renameKeys = renameKeys;
   exports.reverseString = reverseString;
+  exports.RGBToHex = RGBToHex;
   exports.round = round;
   exports.runAsync = runAsync;
   exports.runPromisesInSeries = runPromisesInSeries;
@@ -2868,6 +2909,7 @@
   exports.scrollToTop = scrollToTop;
   exports.sdbm = sdbm;
   exports.serializeCookie = serializeCookie;
+  exports.serializeForm = serializeForm;
   exports.setStyle = setStyle;
   exports.shallowClone = shallowClone;
   exports.shank = shank;
@@ -2900,19 +2942,19 @@
   exports.takeRightWhile = takeRightWhile;
   exports.takeWhile = takeWhile;
   exports.throttle = throttle;
-  exports.timeTaken = timeTaken;
   exports.times = times;
+  exports.timeTaken = timeTaken;
   exports.toCamelCase = toCamelCase;
   exports.toCurrency = toCurrency;
   exports.toDecimalMark = toDecimalMark;
+  exports.toggleClass = toggleClass;
   exports.toHash = toHash;
   exports.toKebabCase = toKebabCase;
+  exports.tomorrow = tomorrow;
   exports.toOrdinalSuffix = toOrdinalSuffix;
   exports.toSafeInteger = toSafeInteger;
   exports.toSnakeCase = toSnakeCase;
   exports.toTitleCase = toTitleCase;
-  exports.toggleClass = toggleClass;
-  exports.tomorrow = tomorrow;
   exports.transform = transform;
   exports.triggerEvent = triggerEvent;
   exports.truncateString = truncateString;
@@ -2932,7 +2974,11 @@
   exports.untildify = untildify;
   exports.unzip = unzip;
   exports.unzipWith = unzipWith;
+  exports.URLJoin = URLJoin;
+  exports.UUIDGeneratorBrowser = UUIDGeneratorBrowser;
+  exports.UUIDGeneratorNode = UUIDGeneratorNode;
   exports.validateNumber = validateNumber;
+  exports.vectorDistance = vectorDistance;
   exports.when = when;
   exports.without = without;
   exports.words = words;

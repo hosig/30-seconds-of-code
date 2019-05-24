@@ -23,6 +23,7 @@ capitalize:string,array,intermediate
 capitalizeEveryWord:string,regexp,intermediate
 castArray:utility,array,type,beginner
 chainAsync:function,intermediate
+checkProp:function,object,utility,beginner
 chunk:array,intermediate
 clampNumber:math,beginner
 cloneRegExp:utility,regexp,intermediate
@@ -39,6 +40,7 @@ copyToClipboard:browser,string,advanced
 countBy:array,object,intermediate
 counter:browser,advanced
 countOccurrences:array,intermediate
+createDirIfNotExists:node,beginner
 createElement:browser,utility,beginner
 createEventHub:browser,event,advanced
 CSVToArray:string,array,utility,intermediate
@@ -51,6 +53,7 @@ decapitalize:string,array,intermediate
 deepClone:object,recursion,intermediate
 deepFlatten:array,recursion,intermediate
 deepFreeze:object,recursion,intermediate
+deepGet:object,intermediate
 deepMapKeys:object,recursion,advanced
 defaults:object,intermediate
 defer:function,intermediate
@@ -89,6 +92,7 @@ flattenObject:object,recursion,intermediate
 flip:adapter,function,intermediate
 forEachRight:array,function,intermediate
 formatDuration:date,math,string,utility,intermediate
+formToObject:browser,object,intermediate
 forOwn:object,intermediate
 forOwnRight:object,intermediate
 fromCamelCase:string,intermediate
@@ -178,6 +182,7 @@ longestItem:array,string,utility,intermediate
 lowercaseKeys:object,intermediate
 luhnCheck:math,utility,advanced
 mapKeys:object,function,intermediate
+mapNumRange:math,beginner
 mapObject:array,object,advanced
 mapString:string,array,function,utility,beginner
 mapValues:object,function,intermediate
@@ -262,6 +267,7 @@ sampleSize:array,random,intermediate
 scrollToTop:browser,intermediate
 sdbm:math,utility,intermediate
 serializeCookie:utility,string,intermediate
+serializeForm:browser,string,intermediate
 setStyle:browser,beginner
 shallowClone:object,beginner
 shank:array,intermediate
@@ -330,6 +336,7 @@ URLJoin:string,utility,regexp,advanced
 UUIDGeneratorBrowser:browser,utility,random,intermediate
 UUIDGeneratorNode:node,utility,random,intermediate
 validateNumber:utility,math,intermediate
+vectorDistance:math,beginner
 when:function,intermediate
 without:array,beginner
 words:string,regexp,intermediate

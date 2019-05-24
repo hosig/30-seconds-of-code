@@ -94,9 +94,9 @@
         "fileName": "arrayToCSV.md",
         "text": "Converts a 2D array to a comma-separated values (CSV) string.\n\nUse `Array.prototype.map()` and `Array.prototype.join(delimiter)` to combine individual 1D arrays (rows) into strings.\nUse `Array.prototype.join('\\n')` to combine all rows into a CSV string, separating each row with a newline.\nOmit the second argument, `delimiter`, to use a default delimiter of `,`.",
         "codeBlocks": {
-          "es6": "const arrayToCSV = (arr, delimiter = ',') =>\n  arr.map(v => v.map(x => `\"${x}\"`).join(delimiter)).join('\\n');",
-          "es5": "var arrayToCSV = function arrayToCSV(arr) {\n  var delimiter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';\n  return arr.map(function (v) {\n    return v.map(function (x) {\n      return \"\\\"\".concat(x, \"\\\"\");\n    }).join(delimiter);\n  }).join('\\n');\n};",
-          "example": "arrayToCSV([['a', 'b'], ['c', 'd']]); // '\"a\",\"b\"\\n\"c\",\"d\"'\narrayToCSV([['a', 'b'], ['c', 'd']], ';'); // '\"a\";\"b\"\\n\"c\";\"d\"'"
+          "es6": "const arrayToCSV = (arr, delimiter = ',') =>\n  arr\n    .map(v => v.map(x => (isNaN(x) ? `\"${x.replace(/\"/g, '\"\"')}\"` : x)).join(delimiter))\n    .join('\\n');",
+          "es5": "var arrayToCSV = function arrayToCSV(arr) {\n  var delimiter = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : ',';\n  return arr.map(function (v) {\n    return v.map(function (x) {\n      return isNaN(x) ? \"\\\"\".concat(x.replace(/\"/g, '\"\"'), \"\\\"\") : x;\n    }).join(delimiter);\n  }).join('\\n');\n};",
+          "example": "arrayToCSV([['a', 'b'], ['c', 'd']]); // '\"a\",\"b\"\\n\"c\",\"d\"'\narrayToCSV([['a', 'b'], ['c', 'd']], ';'); // '\"a\";\"b\"\\n\"c\";\"d\"'\narrayToCSV([['a', '\"b\" great'], ['c', 3.1415]]); // '\"a\",\"\"\"b\"\" great\"\\n\"c\",3.1415'"
         },
         "tags": [
           "array",
@@ -107,7 +107,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "3508f9a15d8a0b0541d12373b8ea697773434fbfd946bb63fc4f0246e4f193ea"
+        "hash": "f31b6cd3ca1c861f0ffb8c05e164f29b674167a5b33cf0d4014febae4021afd1"
       }
     },
     {
@@ -549,6 +549,29 @@
       }
     },
     {
+      "id": "checkProp",
+      "type": "snippet",
+      "attributes": {
+        "fileName": "checkProp.md",
+        "text": "Given a `predicate` function and a `prop` string, this curried function will then take an `object` to inspect by calling the property and passing it to the predicate.\n\nSummon `prop` on `obj`, pass it to a provided `predicate` function and return a masked boolean.",
+        "codeBlocks": {
+          "es6": "const checkProp = (predicate, prop) => obj => !!predicate(obj[prop]);",
+          "es5": "var checkProp = function checkProp(predicate, prop) {\n  return function (obj) {\n    return !!predicate(obj[prop]);\n  };\n};",
+          "example": "const lengthIs4 = checkProp(l => l === 4, 'length');\nlengthIs4([]); // false\nlengthIs4([1,2,3,4]); // true\nlengthIs4(new Set([1,2,3,4])); // false (Set uses Size, not length)\n\nconst session = { user: {} };\nconst validUserSession = checkProps(u => u.active && !u.disabled, 'user');\n\nvalidUserSession(session); // false\n\nsession.user.active = true;\nvalidUserSession(session); // true\n\nconst noLength(l => l === undefined, 'length');\nnoLength([]); // false\nnoLength({}); // true\nnoLength(new Set()); // true"
+        },
+        "tags": [
+          "function",
+          "object",
+          "utility",
+          "beginner"
+        ]
+      },
+      "meta": {
+        "archived": false,
+        "hash": "b9a0897aca121af7d0705cace7673c27b22ffab5e67890a3e1859b7f28df2500"
+      }
+    },
+    {
       "id": "chunk",
       "type": "snippet",
       "attributes": {
@@ -726,7 +749,7 @@
       "type": "snippet",
       "attributes": {
         "fileName": "compactWhitespace.md",
-        "text": "Returns a string with whitespaces compacted.\n\nUse `String.prototype.replace()` with a regular expression to replace all occurences of 2 or more whitespace characters with a single space.",
+        "text": "Returns a string with whitespaces compacted.\n\nUse `String.prototype.replace()` with a regular expression to replace all occurrences of 2 or more whitespace characters with a single space.",
         "codeBlocks": {
           "es6": "const compactWhitespace = str => str.replace(/\\s{2,}/g, ' ');",
           "es5": "var compactWhitespace = function compactWhitespace(str) {\n  return str.replace(/\\s{2,}/g, ' ');\n};",
@@ -740,7 +763,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "c1e8ff69ac01f5be0595f6adf8b0df11dd8b8e557beb71f5faefb7a119282780"
+        "hash": "5b9e921377dd14654bb87eb36a35924fe15957ab98c6adbe88c6b187a7cf37ac"
       }
     },
     {
@@ -890,6 +913,27 @@
       "meta": {
         "archived": false,
         "hash": "f4471dcfb3a53fe8fd2f9e5566d5cf028aa69f4ddba69d6b5acd94c6e6aee133"
+      }
+    },
+    {
+      "id": "createDirIfNotExists",
+      "type": "snippet",
+      "attributes": {
+        "fileName": "createDirIfNotExists.md",
+        "text": "Creates a directory, if it does not exist.\n\nUse `fs.existsSync()` to check if the directory exists, `fs.mkdirSync()` to create it.",
+        "codeBlocks": {
+          "es6": "const fs = require('fs');\nconst createDirIfNotExists = dir => (!fs.existsSync(dir) ? fs.mkdirSync(dir) : undefined);",
+          "es5": "var fs = require('fs');\n\nvar createDirIfNotExists = function createDirIfNotExists(dir) {\n  return !fs.existsSync(dir) ? fs.mkdirSync(dir) : undefined;\n};",
+          "example": "createDirIfNotExists('test'); // creates the directory 'test', if it doesn't exist"
+        },
+        "tags": [
+          "node",
+          "beginner"
+        ]
+      },
+      "meta": {
+        "archived": false,
+        "hash": "62317874ea1df5043926b63d6ff24e861b2f23ab76e5de79af10766844f4f9c7"
       }
     },
     {
@@ -1097,8 +1141,8 @@
         "fileName": "deepClone.md",
         "text": "Creates a deep clone of an object.\n\nUse recursion.\nUse `Object.assign()` and an empty object (`{}`) to create a shallow clone of the original.\nUse `Object.keys()` and `Array.prototype.forEach()` to determine which key-value pairs need to be deep cloned.",
         "codeBlocks": {
-          "es6": "const deepClone = obj => {\n  let clone = Object.assign({}, obj);\n  Object.keys(clone).forEach(\n    key => (clone[key] = typeof obj[key] === 'object' ? deepClone(obj[key]) : obj[key])\n  );\n  return Array.isArray(obj) ? (clone.length = obj.length) && Array.from(clone) : clone;\n};",
-          "es5": "function _typeof(obj) { if (typeof Symbol === \"function\" && typeof Symbol.iterator === \"symbol\") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === \"function\" && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; }; } return _typeof(obj); }\n\nvar deepClone = function deepClone(obj) {\n  var clone = Object.assign({}, obj);\n  Object.keys(clone).forEach(function (key) {\n    return clone[key] = _typeof(obj[key]) === 'object' ? deepClone(obj[key]) : obj[key];\n  });\n  return Array.isArray(obj) ? (clone.length = obj.length) && Array.from(clone) : clone;\n};",
+          "es6": "const deepClone = obj => {\n  let clone = Object.assign({}, obj);\n  Object.keys(clone).forEach(\n    key => (clone[key] = typeof obj[key] === 'object' ? deepClone(obj[key]) : obj[key])\n  );\n  return Array.isArray(obj) && obj.length\n    ? (clone.length = obj.length) && Array.from(clone)\n    : Array.isArray(obj)\n      ? Array.from(obj)\n      : clone;\n};",
+          "es5": "function _typeof(obj) { if (typeof Symbol === \"function\" && typeof Symbol.iterator === \"symbol\") { _typeof = function _typeof(obj) { return typeof obj; }; } else { _typeof = function _typeof(obj) { return obj && typeof Symbol === \"function\" && obj.constructor === Symbol && obj !== Symbol.prototype ? \"symbol\" : typeof obj; }; } return _typeof(obj); }\n\nvar deepClone = function deepClone(obj) {\n  var clone = Object.assign({}, obj);\n  Object.keys(clone).forEach(function (key) {\n    return clone[key] = _typeof(obj[key]) === 'object' ? deepClone(obj[key]) : obj[key];\n  });\n  return Array.isArray(obj) && obj.length ? (clone.length = obj.length) && Array.from(clone) : Array.isArray(obj) ? Array.from(obj) : clone;\n};",
           "example": "const a = { foo: 'bar', obj: { a: 1, b: 2 } };\nconst b = deepClone(a); // a !== b, a.obj !== b.obj"
         },
         "tags": [
@@ -1109,7 +1153,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "920453d0015cea2810cab4930a98143e76489460ef32d1478564c0db80a02f76"
+        "hash": "cec06f266b3a98a9b571f6667e34d00ca1975200f739657db7a25d0371c53565"
       }
     },
     {
@@ -1310,11 +1354,11 @@
       "type": "snippet",
       "attributes": {
         "fileName": "differenceBy.md",
-        "text": "Returns the difference between two arrays, after applying the provided function to each array element of both.\n\nCreate a `Set` by applying `fn` to each element in `b`, then use `Array.prototype.filter()` in combination with `fn` on `a` to only keep values not contained in the previously created set.",
+        "text": "Returns the difference between two arrays, after applying the provided function to each array element of both.\n\nCreate a `Set` by applying `fn` to each element in `b`, then use `Array.prototype.map()` to apply `fn` to each element in `a`, then `Array.prototype.filter()`",
         "codeBlocks": {
-          "es6": "const differenceBy = (a, b, fn) => {\n  const s = new Set(b.map(fn));\n  return a.filter(x => !s.has(fn(x)));\n};",
-          "es5": "var differenceBy = function differenceBy(a, b, fn) {\n  var s = new Set(b.map(fn));\n  return a.filter(function (x) {\n    return !s.has(fn(x));\n  });\n};",
-          "example": "differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor); // [1.2]\ndifferenceBy([{ x: 2 }, { x: 1 }], [{ x: 1 }], v => v.x); // [ { x: 2 } ]"
+          "es6": "const differenceBy = (a, b, fn) => {\n  const s = new Set(b.map(fn));\n  return a.map(fn).filter(el => !s.has(el));\n};",
+          "es5": "var differenceBy = function differenceBy(a, b, fn) {\n  var s = new Set(b.map(fn));\n  return a.map(fn).filter(function (el) {\n    return !s.has(el);\n  });\n};",
+          "example": "differenceBy([2.1, 1.2], [2.3, 3.4], Math.floor); // [1]\ndifferenceBy([{ x: 2 }, { x: 1 }], [{ x: 1 }], v => v.x); // [2]"
         },
         "tags": [
           "array",
@@ -1324,7 +1368,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "92abc752f5d3a659467e3dde7a3890000f4b72d1fdfd66086092494b688506ae"
+        "hash": "01f5f57c5b2663808e733b98e13dfd47d501ab010e681dd49219548816d1a3d0"
       }
     },
     {
@@ -1419,7 +1463,7 @@
       "type": "snippet",
       "attributes": {
         "fileName": "drop.md",
-        "text": "Returns a new array with `n` elements removed from the left.\n\nUse `Array.prototype.slice()` to slice the remove the specified number of elements from the left.",
+        "text": "Returns a new array with `n` elements removed from the left.\n\nUse `Array.prototype.slice()` to remove the specified number of elements from the left.",
         "codeBlocks": {
           "es6": "const drop = (arr, n = 1) => arr.slice(n);",
           "es5": "var drop = function drop(arr) {\n  var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;\n  return arr.slice(n);\n};",
@@ -1432,7 +1476,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "6ab35042dbb8b16be8ea108cf5029b34ac9fb166ca331ad2ed6a52188f5b0ba3"
+        "hash": "0a1e7cfbab47f1f7f8aee9d413bd14f4b84de7672d2481ca4ad9fa6cc2581948"
       }
     },
     {
@@ -1440,7 +1484,7 @@
       "type": "snippet",
       "attributes": {
         "fileName": "dropRight.md",
-        "text": "Returns a new array with `n` elements removed from the right.\n\nUse `Array.prototype.slice()` to slice the remove the specified number of elements from the right.",
+        "text": "Returns a new array with `n` elements removed from the right.\n\nUse `Array.prototype.slice()` to remove the specified number of elements from the right.",
         "codeBlocks": {
           "es6": "const dropRight = (arr, n = 1) => arr.slice(0, -n);",
           "es5": "var dropRight = function dropRight(arr) {\n  var n = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : 1;\n  return arr.slice(0, -n);\n};",
@@ -1453,7 +1497,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "421ed9a64e720bd3ba5969e067f94a3d0c3f515b9e8af5ed420a9bbce48d75cb"
+        "hash": "cee5b129d807482ad41d47f12f4451471964bb5e8e8059cc32b05ffb62706438"
       }
     },
     {
@@ -1982,6 +2026,28 @@
       }
     },
     {
+      "id": "formToObject",
+      "type": "snippet",
+      "attributes": {
+        "fileName": "formToObject.md",
+        "text": "Encode a set of form elements as an `object`.\n\nUse the `FormData` constructor to convert the HTML `form` to `FormData`, `Array.from()` to convert to an array.\nCollect the object from the array, using `Array.prototype.reduce()`.",
+        "codeBlocks": {
+          "es6": "const formToObject = form =>\n  Array.from(new FormData(form)).reduce(\n    (acc, [key, value]) => ({\n      ...acc,\n      [key]: value\n    }),\n    {}\n  );",
+          "es5": "function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i] != null ? arguments[i] : {}; var ownKeys = Object.keys(source); if (typeof Object.getOwnPropertySymbols === 'function') { ownKeys = ownKeys.concat(Object.getOwnPropertySymbols(source).filter(function (sym) { return Object.getOwnPropertyDescriptor(source, sym).enumerable; })); } ownKeys.forEach(function (key) { _defineProperty(target, key, source[key]); }); } return target; }\n\nfunction _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }\n\nfunction _slicedToArray(arr, i) { return _arrayWithHoles(arr) || _iterableToArrayLimit(arr, i) || _nonIterableRest(); }\n\nfunction _nonIterableRest() { throw new TypeError(\"Invalid attempt to destructure non-iterable instance\"); }\n\nfunction _iterableToArrayLimit(arr, i) { var _arr = []; var _n = true; var _d = false; var _e = undefined; try { for (var _i = arr[Symbol.iterator](), _s; !(_n = (_s = _i.next()).done); _n = true) { _arr.push(_s.value); if (i && _arr.length === i) break; } } catch (err) { _d = true; _e = err; } finally { try { if (!_n && _i[\"return\"] != null) _i[\"return\"](); } finally { if (_d) throw _e; } } return _arr; }\n\nfunction _arrayWithHoles(arr) { if (Array.isArray(arr)) return arr; }\n\nvar formToObject = function formToObject(form) {\n  return Array.from(new FormData(form)).reduce(function (acc, _ref) {\n    var _ref2 = _slicedToArray(_ref, 2),\n        key = _ref2[0],\n        value = _ref2[1];\n\n    return _objectSpread({}, acc, _defineProperty({}, key, value));\n  }, {});\n};",
+          "example": "formToObject(document.querySelector('#form')); // { email: 'test@email.com', name: 'Test Name' }"
+        },
+        "tags": [
+          "browser",
+          "object",
+          "intermediate"
+        ]
+      },
+      "meta": {
+        "archived": false,
+        "hash": "2bb4becd71bb5d71e6581e9d944fb44cca6c2c6441fe169fbc1b83e8ed48b4a6"
+      }
+    },
+    {
       "id": "forOwn",
       "type": "snippet",
       "attributes": {
@@ -2439,7 +2505,7 @@
       "type": "snippet",
       "attributes": {
         "fileName": "hashNode.md",
-        "text": "Creates a hash for a value using the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) algorithm. Returns a promise.\n\nUse `crypto` API to create a hash for the given value.",
+        "text": "Creates a hash for a value using the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) algorithm. Returns a promise.\n\nUse `crypto` API to create a hash for the given value, `setTimeout` to prevent blocking on a long operation, and a `Promise` to give it a familiar interface.",
         "codeBlocks": {
           "es6": "const crypto = require('crypto');\nconst hashNode = val =>\n  new Promise(resolve =>\n    setTimeout(\n      () =>\n        resolve(\n          crypto\n            .createHash('sha256')\n            .update(val)\n            .digest('hex')\n        ),\n      0\n    )\n  );",
           "es5": "var crypto = require('crypto');\n\nvar hashNode = function hashNode(val) {\n  return new Promise(function (resolve) {\n    return setTimeout(function () {\n      return resolve(crypto.createHash('sha256').update(val).digest('hex'));\n    }, 0);\n  });\n};",
@@ -2454,7 +2520,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "80adea6b33dacdfc5f2d25ce270472f232208fa688794b71ba042ea368e1ad63"
+        "hash": "2113c5024c3c12df6dc73f2f07d0b478ae19bba9ac11ebd5032b8442aa8f225b"
       }
     },
     {
@@ -3183,11 +3249,11 @@
       "type": "snippet",
       "attributes": {
         "fileName": "isEmpty.md",
-        "text": "Returns true if the a value is an empty object, collection, map or set, has no enumerable properties or is any type that is not considered a collection.\n\nCheck if the provided value is `null` or if its `length` is equal to `0`.",
+        "text": "Returns true if the a value is an empty object, collection, has no enumerable properties or is any type that is not considered a collection.\n\nCheck if the provided value is `null` or if its `length` is equal to `0`.",
         "codeBlocks": {
           "es6": "const isEmpty = val => val == null || !(Object.keys(val) || val).length;",
           "es5": "var isEmpty = function isEmpty(val) {\n  return val == null || !(Object.keys(val) || val).length;\n};",
-          "example": "isEmpty(new Map()); // true\nisEmpty(new Set()); // true\nisEmpty([]); // true\nisEmpty({}); // true\nisEmpty(''); // true\nisEmpty([1, 2]); // false\nisEmpty({ a: 1, b: 2 }); // false\nisEmpty('text'); // false\nisEmpty(123); // true - type is not considered a collection\nisEmpty(true); // true - type is not considered a collection"
+          "example": "isEmpty([]); // true\nisEmpty({}); // true\nisEmpty(''); // true\nisEmpty([1, 2]); // false\nisEmpty({ a: 1, b: 2 }); // false\nisEmpty('text'); // false\nisEmpty(123); // true - type is not considered a collection\nisEmpty(true); // true - type is not considered a collection"
         },
         "tags": [
           "type",
@@ -3199,7 +3265,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "55954fcfb879542225f7d1861ae7de6faac288e28ca857367b6a2eeba9a54786"
+        "hash": "098b40c2316524eb16f88fcc1d1210e4c285b4d3ae069f93bf3dacaccb84b833"
       }
     },
     {
@@ -3336,11 +3402,11 @@
       "type": "snippet",
       "attributes": {
         "fileName": "isNumber.md",
-        "text": "Checks if the given argument is a number.\n\nUse `typeof` to check if a value is classified as a number primitive.",
+        "text": "Checks if the given argument is a number.\n\nUse `typeof` to check if a value is classified as a number primitive. \nTo safeguard against `NaN`, check if `val === val` (as `NaN` has a `typeof` equal to `number` and is the only value not equal to itself).",
         "codeBlocks": {
-          "es6": "const isNumber = val => typeof val === 'number';",
-          "es5": "var isNumber = function isNumber(val) {\n  return typeof val === 'number';\n};",
-          "example": "isNumber('1'); // false\nisNumber(1); // true"
+          "es6": "const isNumber = val => typeof val === 'number' && val === val;",
+          "es5": "var isNumber = function isNumber(val) {\n  return typeof val === 'number' && val === val;\n};",
+          "example": "isNumber(1); // true\nisNumber('1'); // false\nisNumber(NaN); // false"
         },
         "tags": [
           "type",
@@ -3350,7 +3416,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "446ed50e100f18a606c8443be196992b74b235ed98646632463fdc3d01f9eb04"
+        "hash": "3da255d35590d5e0c38cc86dc9bcd3d26cb7350b8880d4490649a3152e3fc945"
       }
     },
     {
@@ -3924,6 +3990,27 @@
       }
     },
     {
+      "id": "mapNumRange",
+      "type": "snippet",
+      "attributes": {
+        "fileName": "mapNumRange.md",
+        "text": "Maps a number from one range to another range.\n\nReturns `num` mapped between `outMin`-`outMax` from `inMin`-`inMax`.",
+        "codeBlocks": {
+          "es6": "const mapNumRange = (num, inMin, inMax, outMin, outMax) =>\n  ((num - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;",
+          "es5": "var mapNumRange = function mapNumRange(num, inMin, inMax, outMin, outMax) {\n  return (num - inMin) * (outMax - outMin) / (inMax - inMin) + outMin;\n};",
+          "example": "mapNumRange(5, 0, 10, 0, 100); // 50"
+        },
+        "tags": [
+          "math",
+          "beginner"
+        ]
+      },
+      "meta": {
+        "archived": false,
+        "hash": "493eaac4ff025739014196f024923baf63e6eba5317c7b364166f3e7087f5bf1"
+      }
+    },
+    {
       "id": "mapObject",
       "type": "snippet",
       "attributes": {
@@ -4218,7 +4305,7 @@
       "type": "snippet",
       "attributes": {
         "fileName": "minBy.md",
-        "text": "Returns the minimum value of an array, after mapping each element to a value using the provided function.\n\nUse `Array.prototype.map()` to map each element to the value returned by `fn`, `Math.min()` to get the maximum value.",
+        "text": "Returns the minimum value of an array, after mapping each element to a value using the provided function.\n\nUse `Array.prototype.map()` to map each element to the value returned by `fn`, `Math.min()` to get the minimum value.",
         "codeBlocks": {
           "es6": "const minBy = (arr, fn) => Math.min(...arr.map(typeof fn === 'function' ? fn : val => val[fn]));",
           "es5": "function _toConsumableArray(arr) { return _arrayWithoutHoles(arr) || _iterableToArray(arr) || _nonIterableSpread(); }\n\nfunction _nonIterableSpread() { throw new TypeError(\"Invalid attempt to spread non-iterable instance\"); }\n\nfunction _iterableToArray(iter) { if (Symbol.iterator in Object(iter) || Object.prototype.toString.call(iter) === \"[object Arguments]\") return Array.from(iter); }\n\nfunction _arrayWithoutHoles(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = new Array(arr.length); i < arr.length; i++) { arr2[i] = arr[i]; } return arr2; } }\n\nvar minBy = function minBy(arr, fn) {\n  return Math.min.apply(Math, _toConsumableArray(arr.map(typeof fn === 'function' ? fn : function (val) {\n    return val[fn];\n  })));\n};",
@@ -4233,7 +4320,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "58be8a0dc3e56ec09b0bb927c2c575c033c70ac3a8b612e993fdcbf6d5a99d51"
+        "hash": "bc285c62d2db31d2dd1a45623dab38e57eb85ca9a7cc83bda7ad286b302ec405"
       }
     },
     {
@@ -5765,6 +5852,28 @@
       }
     },
     {
+      "id": "serializeForm",
+      "type": "snippet",
+      "attributes": {
+        "fileName": "serializeForm.md",
+        "text": "Encode a set of form elements as a query string.\n\nUse the `FormData` constructor to convert the HTML `form` to `FormData`, `Array.from()` to convert to an array, passing a map function as the second argument.\nUse `Array.prototype.map()` and `window.encodeURIComponent()` to encode each field's value.\nUse `Array.prototype.join()` with appropriate argumens to produce an appropriate query string.",
+        "codeBlocks": {
+          "es6": "const serializeForm = form =>\n  Array.from(new FormData(form), field => field.map(encodeURIComponent).join('=')).join('&');",
+          "es5": "var serializeForm = function serializeForm(form) {\n  return Array.from(new FormData(form), function (field) {\n    return field.map(encodeURIComponent).join('=');\n  }).join('&');\n};",
+          "example": "serializeForm(document.querySelector('#form')); // email=test%40email.com&name=Test%20Name"
+        },
+        "tags": [
+          "browser",
+          "string",
+          "intermediate"
+        ]
+      },
+      "meta": {
+        "archived": false,
+        "hash": "2667730d717644182036005fffd041cb6f44173d1dc64e8d75ccf491a66e1ebb"
+      }
+    },
+    {
       "id": "setStyle",
       "type": "snippet",
       "attributes": {
@@ -6639,11 +6748,11 @@
       "type": "snippet",
       "attributes": {
         "fileName": "tomorrow.md",
-        "text": "Results in a string representation of tomorrow's date.\n\nUse `new Date()` to get today's date, adding one day using `Date.getDate()` and `Date.setDate()`, and converting the Date object to a string.",
+        "text": "Results in a string representation of tomorrow's date.\n\nUse `new Date()` to get the current date, increment by one using `Date.getDate()` and set the value to the result using `Date.setDate()`. \nUse `Date.prototype.toISOString()` to return a string in `yyyy-mm-dd` format.",
         "codeBlocks": {
-          "es6": "const tomorrow = (long = false) => {\n  let t = new Date();\n  t.setDate(t.getDate() + 1);\n  const ret = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(\n    t.getDate()\n  ).padStart(2, '0')}`;\n  return !long ? ret : `${ret}T00:00:00`;\n};",
-          "es5": "var tomorrow = function tomorrow() {\n  var long = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : false;\n  var t = new Date();\n  t.setDate(t.getDate() + 1);\n  var ret = \"\".concat(t.getFullYear(), \"-\").concat(String(t.getMonth() + 1).padStart(2, '0'), \"-\").concat(String(t.getDate()).padStart(2, '0'));\n  return !long ? ret : \"\".concat(ret, \"T00:00:00\");\n};",
-          "example": "tomorrow(); // 2017-12-27 (if current date is 2017-12-26)\ntomorrow(true); // 2017-12-27T00:00:00 (if current date is 2017-12-26)"
+          "es6": "const tomorrow = () => {\n  let t = new Date();\n  t.setDate(t.getDate() + 1);\n  return t.toISOString().split('T')[0];\n};",
+          "es5": "var tomorrow = function tomorrow() {\n  var t = new Date();\n  t.setDate(t.getDate() + 1);\n  return t.toISOString().split('T')[0];\n};",
+          "example": "tomorrow(); // 2018-10-19 (if current date is 2018-10-18)"
         },
         "tags": [
           "date",
@@ -6652,7 +6761,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "4794ae637e65b9c1ac43f6c964555a98cda83e1410684e11ed34753c81db35fb"
+        "hash": "8ffc5004edab7e91d1af653a07c820c82720dc81ee2233f2c43839c25f58acda"
       }
     },
     {
@@ -7030,7 +7139,7 @@
       "type": "snippet",
       "attributes": {
         "fileName": "uniqueElementsBy.md",
-        "text": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the first unique occurence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared.",
+        "text": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the first unique occurrence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared.",
         "codeBlocks": {
           "es6": "const uniqueElementsBy = (arr, fn) =>\n  arr.reduce((acc, v) => {\n    if (!acc.some(x => fn(v, x))) acc.push(v);\n    return acc;\n  }, []);",
           "es5": "var uniqueElementsBy = function uniqueElementsBy(arr, fn) {\n  return arr.reduce(function (acc, v) {\n    if (!acc.some(function (x) {\n      return fn(v, x);\n    })) acc.push(v);\n    return acc;\n  }, []);\n};",
@@ -7044,7 +7153,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "38bee97eef5e2918ce534d6f25ad2a8b40d4841c7a663d9a9a596dd4687ce5bc"
+        "hash": "f7ac261844dc5146be57a82cdcf7d8dad6990bd4a923eeb8148a6e8b2adabe27"
       }
     },
     {
@@ -7052,7 +7161,7 @@
       "type": "snippet",
       "attributes": {
         "fileName": "uniqueElementsByRight.md",
-        "text": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the last unique occurence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared.",
+        "text": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the last unique occurrence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared.",
         "codeBlocks": {
           "es6": "const uniqueElementsByRight = (arr, fn) =>\n  arr.reduceRight((acc, v) => {\n    if (!acc.some(x => fn(v, x))) acc.push(v);\n    return acc;\n  }, []);",
           "es5": "var uniqueElementsByRight = function uniqueElementsByRight(arr, fn) {\n  return arr.reduceRight(function (acc, v) {\n    if (!acc.some(function (x) {\n      return fn(v, x);\n    })) acc.push(v);\n    return acc;\n  }, []);\n};",
@@ -7066,7 +7175,7 @@
       },
       "meta": {
         "archived": false,
-        "hash": "cec8e5f01c8d00c246a12fabb43713a60da510f50c3d548f703f664936373096"
+        "hash": "c21790120505a25f0f75d92591b5ca248fb40dd0b70438fee5ecfa22d4a61399"
       }
     },
     {
@@ -7245,6 +7354,27 @@
       "meta": {
         "archived": false,
         "hash": "8fb993b0cf78fa83a170aca132bf5eb13430e2cef5ae06f85b9763f286bb792c"
+      }
+    },
+    {
+      "id": "vectorDistance",
+      "type": "snippet",
+      "attributes": {
+        "fileName": "vectorDistance.md",
+        "text": "Returns the distance between two vectors.\n\nUse `Array.prototype.reduce()`, `Math.pow()` and `Math.sqrt()` to calculate the Euclidean distance between two vectors.",
+        "codeBlocks": {
+          "es6": "const vectorDistance = (...coords) => {\n  let pointLength = Math.trunc(coords.length / 2);\n  let sum = coords\n    .slice(0, pointLength)\n    .reduce((acc, val, i) => acc + Math.pow(val - coords[pointLength + i], 2), 0);\n  return Math.sqrt(sum);\n};",
+          "es5": "var vectorDistance = function vectorDistance() {\n  for (var _len = arguments.length, coords = new Array(_len), _key = 0; _key < _len; _key++) {\n    coords[_key] = arguments[_key];\n  }\n\n  var pointLength = Math.trunc(coords.length / 2);\n  var sum = coords.slice(0, pointLength).reduce(function (acc, val, i) {\n    return acc + Math.pow(val - coords[pointLength + i], 2);\n  }, 0);\n  return Math.sqrt(sum);\n};",
+          "example": "vectorDistance(10, 0, 5, 20, 0, 10); // 11.180339887498949"
+        },
+        "tags": [
+          "math",
+          "beginner"
+        ]
+      },
+      "meta": {
+        "archived": false,
+        "hash": "03d98fe59bf128d50085af5f2948009b08f53f53f72f2bff7421c34f70287b63"
       }
     },
     {
@@ -7733,15 +7863,15 @@
         "fileName": "levenshteinDistance.md",
         "text": "Calculates the [Levenshtein distance](https://en.wikipedia.org/wiki/Levenshtein_distance) between two strings.\n\nCalculates the number of changes (substitutions, deletions or additions) required to convert `string1` to `string2`. \nCan also be used to compare two strings as shown in the second example.",
         "codeBlocks": {
-          "es6": "``` js\nconst levenshteinDistance = (string1, string2) => {\n  if (string1.length === 0) return string2.length;\n  if (string2.length === 0) return string1.length;\n  let matrix = Array(string2.length + 1)\n    .fill(0)\n    .map((x, i) => [i]);\n  matrix[0] = Array(string1.length + 1)\n    .fill(0)\n    .map((x, i) => i);\n  for (let i = 1; i <= string2.length; i++) {\n    for (let j = 1; j <= string1.length; j++) {\n      if (string2[i - 1] === string1[j - 1]) {\n        matrix[i][j] = matrix[i - 1][j - 1];\n      } else {\n        matrix[i][j] = Math.min(\n          matrix[i - 1][j - 1] + 1,\n          matrix[i][j - 1] + 1,\n          matrix[i - 1][j] + 1\n        );\n      }\n    }\n  }\n  return matrix[string2.length][string1.length];\n};\n```",
-          "es5": "function _templateObject2() {\n  var data = _taggedTemplateLiteral([\" js\\nconst levenshteinDistance = (string1, string2) => {\\n  if (string1.length === 0) return string2.length;\\n  if (string2.length === 0) return string1.length;\\n  let matrix = Array(string2.length + 1)\\n    .fill(0)\\n    .map((x, i) => [i]);\\n  matrix[0] = Array(string1.length + 1)\\n    .fill(0)\\n    .map((x, i) => i);\\n  for (let i = 1; i <= string2.length; i++) {\\n    for (let j = 1; j <= string1.length; j++) {\\n      if (string2[i - 1] === string1[j - 1]) {\\n        matrix[i][j] = matrix[i - 1][j - 1];\\n      } else {\\n        matrix[i][j] = Math.min(\\n          matrix[i - 1][j - 1] + 1,\\n          matrix[i][j - 1] + 1,\\n          matrix[i - 1][j] + 1\\n        );\\n      }\\n    }\\n  }\\n  return matrix[string2.length][string1.length];\\n};\\n\"]);\n\n  _templateObject2 = function _templateObject2() {\n    return data;\n  };\n\n  return data;\n}\n\nfunction _templateObject() {\n  var data = _taggedTemplateLiteral([\"\"]);\n\n  _templateObject = function _templateObject() {\n    return data;\n  };\n\n  return data;\n}\n\nfunction _taggedTemplateLiteral(strings, raw) { if (!raw) { raw = strings.slice(0); } return Object.freeze(Object.defineProperties(strings, { raw: { value: Object.freeze(raw) } })); }\n\n\"\"(_templateObject2())(_templateObject());",
+          "es6": "const levenshteinDistance = (string1, string2) => {\n  if (string1.length === 0) return string2.length;\n  if (string2.length === 0) return string1.length;\n  let matrix = Array(string2.length + 1)\n    .fill(0)\n    .map((x, i) => [i]);\n  matrix[0] = Array(string1.length + 1)\n    .fill(0)\n    .map((x, i) => i);\n  for (let i = 1; i <= string2.length; i++) {\n    for (let j = 1; j <= string1.length; j++) {\n      if (string2[i - 1] === string1[j - 1]) {\n        matrix[i][j] = matrix[i - 1][j - 1];\n      } else {\n        matrix[i][j] = Math.min(\n          matrix[i - 1][j - 1] + 1,\n          matrix[i][j - 1] + 1,\n          matrix[i - 1][j] + 1\n        );\n      }\n    }\n  }\n  return matrix[string2.length][string1.length];\n};",
+          "es5": "var levenshteinDistance = function levenshteinDistance(string1, string2) {\n  if (string1.length === 0) return string2.length;\n  if (string2.length === 0) return string1.length;\n  var matrix = Array(string2.length + 1).fill(0).map(function (x, i) {\n    return [i];\n  });\n  matrix[0] = Array(string1.length + 1).fill(0).map(function (x, i) {\n    return i;\n  });\n\n  for (var i = 1; i <= string2.length; i++) {\n    for (var j = 1; j <= string1.length; j++) {\n      if (string2[i - 1] === string1[j - 1]) {\n        matrix[i][j] = matrix[i - 1][j - 1];\n      } else {\n        matrix[i][j] = Math.min(matrix[i - 1][j - 1] + 1, matrix[i][j - 1] + 1, matrix[i - 1][j] + 1);\n      }\n    }\n  }\n\n  return matrix[string2.length][string1.length];\n};",
           "example": "levenshteinDistance('30-seconds-of-code','30-seconds-of-python-code'); // 7\nconst compareStrings = (string1,string2) => (100 - levenshteinDistance(string1,string2) / Math.max(string1.length,string2.length));\ncompareStrings('30-seconds-of-code', '30-seconds-of-python-code'); // 99.72 (%)"
         },
         "tags": []
       },
       "meta": {
         "archived": true,
-        "hash": "3cc34a842404de0aea2752a6b1398b8a0825cb1a359ff36ab5275f7d15eff107"
+        "hash": "367a5087f8147bb01f2968132ae45dfc5c708c52398ae805292025315d1c7844"
       }
     },
     {
@@ -7813,7 +7943,7 @@
       },
       "meta": {
         "archived": true,
-        "hash": "7af37e0984b5c8bd78d6b224cdc155f8c2bf687e38b5cfee27f32c7c29dcddf5"
+        "hash": "ac13cf4ff52357534c814d458895d6a70a5193a552398f9cac7f86016a5e6544"
       }
     },
     {

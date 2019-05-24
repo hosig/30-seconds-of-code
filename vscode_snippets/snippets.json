@@ -31,7 +31,9 @@
     "prefix": "30s_arrayToCSV",
     "body": [
       "const arrayToCSV = (arr, delimiter = ',') =>",
-      "  arr.map(v => v.map(x => `\"${x}\"`).join(delimiter)).join('\\n');"
+      "  arr",
+      "    .map(v => v.map(x => (isNaN(x) ? `\"${x.replace(/\"/g, '\"\"')}\"` : x)).join(delimiter))",
+      "    .join('\\n');"
     ],
     "description": "Converts a 2D array to a comma-separated values (CSV) string.\n\nUse `Array.prototype.map()` and `Array.prototype.join(delimiter)` to combine individual 1D arrays (rows) into strings.\nUse `Array.prototype.join('\\n')` to combine all rows into a CSV string, separating each row with a newline.\nOmit the second argument, `delimiter`, to use a default delimiter of `,`"
   },
@@ -218,6 +220,13 @@
     ],
     "description": "Chains asynchronous functions.\n\nLoop through an array of functions containing asynchronous events, calling `next` when each asynchronous event has completed"
   },
+  "checkProp": {
+    "prefix": "30s_checkProp",
+    "body": [
+      "const checkProp = (predicate, prop) => obj => !!predicate(obj[prop]);"
+    ],
+    "description": "Given a `predicate` function and a `prop` string, this curried function will then take an `object` to inspect by calling the property and passing it to the predicate.\n\nSummon `prop` on `obj`, pass it to a provided `predicate` function and return a masked boolean"
+  },
   "chunk": {
     "prefix": "30s_chunk",
     "body": [
@@ -299,7 +308,7 @@
     "body": [
       "const compactWhitespace = str => str.replace(/\\s{2,}/g, ' ');"
     ],
-    "description": "Returns a string with whitespaces compacted.\n\nUse `String.prototype.replace()` with a regular expression to replace all occurences of 2 or more whitespace characters with a single space"
+    "description": "Returns a string with whitespaces compacted.\n\nUse `String.prototype.replace()` with a regular expression to replace all occurrences of 2 or more whitespace characters with a single space"
   },
   "compose": {
     "prefix": "30s_compose",
@@ -379,6 +388,14 @@
       "const countOccurrences = (arr, val) => arr.reduce((a, v) => (v === val ? a + 1 : a), 0);"
     ],
     "description": "Counts the occurrences of a value in an array.\n\nUse `Array.prototype.reduce()` to increment a counter each time you encounter the specific value inside the array"
+  },
+  "createDirIfNotExists": {
+    "prefix": "30s_createDirIfNotExists",
+    "body": [
+      "const fs = require('fs');",
+      "const createDirIfNotExists = dir => (!fs.existsSync(dir) ? fs.mkdirSync(dir) : undefined);"
+    ],
+    "description": "Creates a directory, if it does not exist.\n\nUse `fs.existsSync()` to check if the directory exists, `fs.mkdirSync()` to create it"
   },
   "createElement": {
     "prefix": "30s_createElement",
@@ -490,7 +507,11 @@
       "  Object.keys(clone).forEach(",
       "    key => (clone[key] = typeof obj[key] === 'object' ? deepClone(obj[key]) : obj[key])",
       "  );",
-      "  return Array.isArray(obj) ? (clone.length = obj.length) && Array.from(clone) : clone;",
+      "  return Array.isArray(obj) && obj.length",
+      "    ? (clone.length = obj.length) && Array.from(clone)",
+      "    : Array.isArray(obj)",
+      "      ? Array.from(obj)",
+      "      : clone;",
       "};"
     ],
     "description": "Creates a deep clone of an object.\n\nUse recursion.\nUse `Object.assign()` and an empty object (`{}`) to create a shallow clone of the original.\nUse `Object.keys()` and `Array.prototype.forEach()` to determine which key-value pairs need to be deep cloned"
@@ -583,10 +604,10 @@
     "body": [
       "const differenceBy = (a, b, fn) => {",
       "  const s = new Set(b.map(fn));",
-      "  return a.filter(x => !s.has(fn(x)));",
+      "  return a.map(fn).filter(el => !s.has(el));",
       "};"
     ],
-    "description": "Returns the difference between two arrays, after applying the provided function to each array element of both.\n\nCreate a `Set` by applying `fn` to each element in `b`, then use `Array.prototype.filter()` in combination with `fn` on `a` to only keep values not contained in the previously created set"
+    "description": "Returns the difference between two arrays, after applying the provided function to each array element of both.\n\nCreate a `Set` by applying `fn` to each element in `b`, then use `Array.prototype.map()` to apply `fn` to each element in `a`, then `Array.prototype.filter()"
   },
   "differenceWith": {
     "prefix": "30s_differenceWith",
@@ -627,14 +648,14 @@
     "body": [
       "const drop = (arr, n = 1) => arr.slice(n);"
     ],
-    "description": "Returns a new array with `n` elements removed from the left.\n\nUse `Array.prototype.slice()` to slice the remove the specified number of elements from the left"
+    "description": "Returns a new array with `n` elements removed from the left.\n\nUse `Array.prototype.slice()` to remove the specified number of elements from the left"
   },
   "dropRight": {
     "prefix": "30s_dropRight",
     "body": [
       "const dropRight = (arr, n = 1) => arr.slice(0, -n);"
     ],
-    "description": "Returns a new array with `n` elements removed from the right.\n\nUse `Array.prototype.slice()` to slice the remove the specified number of elements from the right"
+    "description": "Returns a new array with `n` elements removed from the right.\n\nUse `Array.prototype.slice()` to remove the specified number of elements from the right"
   },
   "dropRightWhile": {
     "prefix": "30s_dropRightWhile",
@@ -901,6 +922,20 @@
     ],
     "description": "Returns the human readable format of the given number of milliseconds.\n\nDivide `ms` with the appropriate values to obtain the appropriate values for `day`, `hour`, `minute`, `second` and `millisecond`.\nUse `Object.entries()` with `Array.prototype.filter()` to keep only non-zero values.\nUse `Array.prototype.map()` to create the string for each value, pluralizing appropriately.\nUse `String.prototype.join(', ')` to combine the values into a string"
   },
+  "formToObject": {
+    "prefix": "30s_formToObject",
+    "body": [
+      "const formToObject = form =>",
+      "  Array.from(new FormData(form)).reduce(",
+      "    (acc, [key, value]) => ({",
+      "      ...acc,",
+      "      [key]: value",
+      "    }),",
+      "    {}",
+      "  );"
+    ],
+    "description": "Encode a set of form elements as an `object`.\n\nUse the `FormData` constructor to convert the HTML `form` to `FormData`, `Array.from()` to convert to an array.\nCollect the object from the array, using `Array.prototype.reduce()`"
+  },
   "forOwn": {
     "prefix": "30s_forOwn",
     "body": [
@@ -1121,7 +1156,7 @@
       "    )",
       "  );"
     ],
-    "description": "Creates a hash for a value using the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) algorithm. Returns a promise.\n\nUse `crypto` API to create a hash for the given value"
+    "description": "Creates a hash for a value using the [SHA-256](https://en.wikipedia.org/wiki/SHA-2) algorithm. Returns a promise.\n\nUse `crypto` API to create a hash for the given value, `setTimeout` to prevent blocking on a long operation, and a `Promise` to give it a familiar interface"
   },
   "head": {
     "prefix": "30s_head",
@@ -1435,7 +1470,7 @@
     "body": [
       "const isEmpty = val => val == null || !(Object.keys(val) || val).length;"
     ],
-    "description": "Returns true if the a value is an empty object, collection, map or set, has no enumerable properties or is any type that is not considered a collection.\n\nCheck if the provided value is `null` or if its `length` is equal to `0`"
+    "description": "Returns true if the a value is an empty object, collection, has no enumerable properties or is any type that is not considered a collection.\n\nCheck if the provided value is `null` or if its `length` is equal to `0`"
   },
   "isEven": {
     "prefix": "30s_isEven",
@@ -1482,9 +1517,9 @@
   "isNumber": {
     "prefix": "30s_isNumber",
     "body": [
-      "const isNumber = val => typeof val === 'number';"
+      "const isNumber = val => typeof val === 'number' && val === val;"
     ],
-    "description": "Checks if the given argument is a number.\n\nUse `typeof` to check if a value is classified as a number primitive"
+    "description": "Checks if the given argument is a number.\n\nUse `typeof` to check if a value is classified as a number primitive. \nTo safeguard against `NaN`, check if `val === val` (as `NaN` has a `typeof` equal to `number` and is the only value not equal to itself)"
   },
   "isObject": {
     "prefix": "30s_isObject",
@@ -1740,6 +1775,14 @@
     ],
     "description": "Creates an object with keys generated by running the provided function for each key and the same values as the provided object.\n\nUse `Object.keys(obj)` to iterate over the object's keys.\nUse `Array.prototype.reduce()` to create a new object with the same values and mapped keys using `fn`"
   },
+  "mapNumRange": {
+    "prefix": "30s_mapNumRange",
+    "body": [
+      "const mapNumRange = (num, inMin, inMax, outMin, outMax) =>",
+      "  ((num - inMin) * (outMax - outMin)) / (inMax - inMin) + outMin;"
+    ],
+    "description": "Maps a number from one range to another range.\n\nReturns `num` mapped between `outMin`-`outMax` from `inMin`-`inMax`"
+  },
   "mapObject": {
     "prefix": "30s_mapObject",
     "body": [
@@ -1873,7 +1916,7 @@
     "body": [
       "const minBy = (arr, fn) => Math.min(...arr.map(typeof fn === 'function' ? fn : val => val[fn]));"
     ],
-    "description": "Returns the minimum value of an array, after mapping each element to a value using the provided function.\n\nUse `Array.prototype.map()` to map each element to the value returned by `fn`, `Math.min()` to get the maximum value"
+    "description": "Returns the minimum value of an array, after mapping each element to a value using the provided function.\n\nUse `Array.prototype.map()` to map each element to the value returned by `fn`, `Math.min()` to get the minimum value"
   },
   "minDate": {
     "prefix": "30s_minDate",
@@ -2602,6 +2645,14 @@
     ],
     "description": "Serialize a cookie name-value pair into a Set-Cookie header string.\n\nUse template literals and `encodeURIComponent()` to create the appropriate string"
   },
+  "serializeForm": {
+    "prefix": "30s_serializeForm",
+    "body": [
+      "const serializeForm = form =>",
+      "  Array.from(new FormData(form), field => field.map(encodeURIComponent).join('=')).join('&');"
+    ],
+    "description": "Encode a set of form elements as a query string.\n\nUse the `FormData` constructor to convert the HTML `form` to `FormData`, `Array.from()` to convert to an array, passing a map function as the second argument.\nUse `Array.prototype.map()` and `window.encodeURIComponent()` to encode each field's value.\nUse `Array.prototype.join()` with appropriate argumens to produce an appropriate query string"
+  },
   "setStyle": {
     "prefix": "30s_setStyle",
     "body": [
@@ -3012,16 +3063,13 @@
   "tomorrow": {
     "prefix": "30s_tomorrow",
     "body": [
-      "const tomorrow = (long = false) => {",
+      "const tomorrow = () => {",
       "  let t = new Date();",
       "  t.setDate(t.getDate() + 1);",
-      "  const ret = `${t.getFullYear()}-${String(t.getMonth() + 1).padStart(2, '0')}-${String(",
-      "    t.getDate()",
-      "  ).padStart(2, '0')}`;",
-      "  return !long ? ret : `${ret}T00:00:00`;",
+      "  return t.toISOString().split('T')[0];",
       "};"
     ],
-    "description": "Results in a string representation of tomorrow's date.\n\nUse `new Date()` to get today's date, adding one day using `Date.getDate()` and `Date.setDate()`, and converting the Date object to a string"
+    "description": "Results in a string representation of tomorrow's date.\n\nUse `new Date()` to get the current date, increment by one using `Date.getDate()` and set the value to the result using `Date.setDate()`. \nUse `Date.prototype.toISOString()` to return a string in `yyyy-mm-dd` format"
   },
   "toOrdinalSuffix": {
     "prefix": "30s_toOrdinalSuffix",
@@ -3211,7 +3259,7 @@
       "    return acc;",
       "  }, []);"
     ],
-    "description": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the first unique occurence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared"
+    "description": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the first unique occurrence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared"
   },
   "uniqueElementsByRight": {
     "prefix": "30s_uniqueElementsByRight",
@@ -3222,7 +3270,7 @@
       "    return acc;",
       "  }, []);"
     ],
-    "description": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the last unique occurence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared"
+    "description": "Returns all unique values of an array, based on a provided comparator function.\n\nUse `Array.prototype.reduce()` and `Array.prototype.some()` for an array containing only the last unique occurrence of each value, based on the comparator function, `fn`.\nThe comparator function takes two arguments: the values of the two elements being compared"
   },
   "uniqueSymmetricDifference": {
     "prefix": "30s_uniqueSymmetricDifference",
@@ -3310,6 +3358,19 @@
       "const validateNumber = n => !isNaN(parseFloat(n)) && isFinite(n) && Number(n) == n;"
     ],
     "description": "Returns `true` if the given value is a number, `false` otherwise.\n\nUse `!isNaN()` in combination with `parseFloat()` to check if the argument is a number.\nUse `isFinite()` to check if the number is finite.\nUse `Number()` to check if the coercion holds"
+  },
+  "vectorDistance": {
+    "prefix": "30s_vectorDistance",
+    "body": [
+      "const vectorDistance = (...coords) => {",
+      "  let pointLength = Math.trunc(coords.length / 2);",
+      "  let sum = coords",
+      "    .slice(0, pointLength)",
+      "    .reduce((acc, val, i) => acc + Math.pow(val - coords[pointLength + i], 2), 0);",
+      "  return Math.sqrt(sum);",
+      "};"
+    ],
+    "description": "Returns the distance between two vectors.\n\nUse `Array.prototype.reduce()`, `Math.pow()` and `Math.sqrt()` to calculate the Euclidean distance between two vectors"
   },
   "when": {
     "prefix": "30s_when",
